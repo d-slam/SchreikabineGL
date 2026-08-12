@@ -64,7 +64,7 @@ class MenuComponent : public juce::Component
 {
 public:
     MenuComponent()
-    {        
+    {
         soloMenu.reset(new SoloMenu);
         addAndMakeVisible(soloMenu.get());
         duoMenu.reset(new DuoMenu);
@@ -99,7 +99,6 @@ public:
         btnDuo = nullptr;
         soloMenu = nullptr;
         duoMenu = nullptr;
-        
     }
     void paint(juce::Graphics &g) override
     {
@@ -114,13 +113,9 @@ public:
     }
 
 private:
-    // SoloMenu soloMenu;
-    // DuoMenu duoMenu;
-    std::unique_ptr<SoloMenu> soloMenu;
-    std::unique_ptr<DuoMenu> duoMenu;
-
-
-
     std::unique_ptr<juce::TextButton> btnSolo;
     std::unique_ptr<juce::TextButton> btnDuo;
+
+    std::unique_ptr<SoloMenu> soloMenu;
+    std::unique_ptr<DuoMenu> duoMenu;
 };
