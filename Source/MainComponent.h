@@ -39,8 +39,7 @@ private:
     // UI is delegated to UIComponent (defined in UIComponent.h)
     std::unique_ptr<UIComponent> uiComp;
 
-    std::unique_ptr<AudioState> audioState;
-    
+    std::unique_ptr<AudioState> audioState;    
 
     // custom audio callback for zero-latency input monitoring + synth mixing
     std::unique_ptr<LocalAudioCallback> customAudioCallback;
@@ -55,9 +54,6 @@ private:
 
     int sampleNote1 = 60;
     int sampleNote2 = 61;
-
-
-
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
 };

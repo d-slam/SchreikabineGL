@@ -125,8 +125,7 @@ MainComponent::MainComponent()
 MainComponent::~MainComponent()
 {
     // Remove custom audio callback if registered
-    if (customAudioCallback)
-        deviceManager.removeAudioCallback(customAudioCallback.get());
+    if (customAudioCallback) deviceManager.removeAudioCallback(customAudioCallback.get());
 
     // unique_ptr will clean up uiComp and audioState automatically
 
@@ -177,18 +176,15 @@ void MainComponent::paint(juce::Graphics& g)
 void MainComponent::resized()
 {
     // delegate layout to UIComponent: make it fill the available area
-    if (uiComp != nullptr)
-        uiComp->setBounds(getLocalBounds());
+    if (uiComp != nullptr) uiComp->setBounds(getLocalBounds());
 }
 // helper: add sample file as a SamplerSound to the synth
 void MainComponent::addSampleFromFile(const juce::File& f, int rootNote)
 {
-    if (!f.existsAsFile())
-        return;
+    if (!f.existsAsFile()) return;
 
     std::unique_ptr<juce::AudioFormatReader> reader(formatManager.createReaderFor(f));
-    if (reader.get() == nullptr)
-        return;
+    if (reader.get() == nullptr) return;
 
     juce::BigInteger noteMap;
     noteMap.clear();
@@ -197,18 +193,14 @@ void MainComponent::addSampleFromFile(const juce::File& f, int rootNote)
     const double attack = 0.01, release = 0.1;
 
     // Route sounds to synth1/synth2/synth3 depending on rootNote
-    if (rootNote == sampleNote1)
-        synth1.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
-    else if (rootNote == sampleNote2)
-        synth2.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
-    else if (rootNote == sampleNote3)
-        synth3.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
+    if (rootNote == sampleNote1)        synth1.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
+    else if (rootNote == sampleNote2)   synth2.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
+    else if (rootNote == sampleNote3)   synth3.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
 }
 
 void MainComponent::autoLoadSamplesFromFolder(const juce::File& folder)
 {
-    if (!folder.exists() || !folder.isDirectory())
-        return;
+    if (!folder.exists() || !folder.isDirectory()) return;
 
     juce::Array<juce::File> files;
     folder.findChildFiles(files, juce::File::findFiles, false, "*.wav;*.WAV");
@@ -216,21 +208,18 @@ void MainComponent::autoLoadSamplesFromFolder(const juce::File& folder)
     if (files.size() > 0)
     {
         addSampleFromFile(files[0], sampleNote1);
-        if (uiComp != nullptr)
-            uiComp->settingsComponent->fileLabel1->setText(files[0].getFileName(), juce::dontSendNotification);
+        if (uiComp != nullptr) uiComp->settingsComponent->fileLabel1->setText(files[0].getFileName(), juce::dontSendNotification);
     }
 
     if (files.size() > 1)
     {
         addSampleFromFile(files[1], sampleNote2);
-        if (uiComp != nullptr)
-            uiComp->settingsComponent->fileLabel2->setText(files[1].getFileName(), juce::dontSendNotification);
+        if (uiComp != nullptr) uiComp->settingsComponent->fileLabel2->setText(files[1].getFileName(), juce::dontSendNotification);
     }
 
     if (files.size() > 2)
     {
         addSampleFromFile(files[2], sampleNote3);
-        if (uiComp != nullptr)
-            uiComp->settingsComponent->fileLabel3->setText(files[2].getFileName(), juce::dontSendNotification);
+        if (uiComp != nullptr) uiComp->settingsComponent->fileLabel3->setText(files[2].getFileName(), juce::dontSendNotification);
     }
 }

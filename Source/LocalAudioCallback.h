@@ -6,16 +6,15 @@
 // and renders the synth into the output buffer. Runs on the audio thread.
 struct LocalAudioCallback : public juce::AudioIODeviceCallback
 {
-    LocalAudioCallback(juce::Synthesiser &s1, juce::Synthesiser &s2, juce::Synthesiser &s3, AudioState &state)
+    LocalAudioCallback(juce::Synthesiser& s1, juce::Synthesiser& s2, juce::Synthesiser& s3, AudioState& state)
         : synth1(s1), synth2(s2), synth3(s3), monitorEnabled(state.monitorEnabled), cutoffHzRef(state.cutoffHz), vol1(state.vol1), vol2(state.vol2), vol3(state.vol3), filterType(state.filterType)
     {
     }
 
-    void audioDeviceAboutToStart(juce::AudioIODevice *device) override
+    void audioDeviceAboutToStart(juce::AudioIODevice* device) override
     {
         sampleRate = device != nullptr ? device->getCurrentSampleRate() : 44100.0;
-        if (sampleRate <= 0.0)
-            sampleRate = 44100.0; // fallback to safe default
+        if (sampleRate <= 0.0) sampleRate = 44100.0; // fallback to safe default
 
         // ensure synths know the current sample rate before any renderNextBlock calls
         synth1.setCurrentPlaybackSampleRate(sampleRate);
@@ -32,10 +31,9 @@ struct LocalAudioCallback : public juce::AudioIODeviceCallback
 
     void audioDeviceStopped() override {}
 
-    void audioDeviceIOCallbackWithContext(const float *const *inputChannelData, int numInputChannels,
-                                          float *const *outputChannelData, int numOutputChannels,
-                                          int numSamples,
-                                          const juce::AudioIODeviceCallbackContext & /*context*/) override
+    void audioDeviceIOCallbackWithContext(const float* const* inputChannelData, int numInputChannels,
+        float* const* outputChannelData, int numOutputChannels, int numSamples,
+        const juce::AudioIODeviceCallbackContext& /*context*/) override
     {
         // ensure filter arrays match output channels
         if (monitorFilters.size() != (size_t)numOutputChannels)
@@ -62,15 +60,11 @@ struct LocalAudioCallback : public juce::AudioIODeviceCallback
             lastFilterType = currentType;
             juce::IIRCoefficients newc;
             const double sr = (sampleRate > 0.0) ? sampleRate : 44100.0;
-            if (currentType == 0)
-                newc = juce::IIRCoefficients::makeLowPass(sr, lastCutoff);
-            else
-                newc = juce::IIRCoefficients::makeHighPass(sr, lastCutoff);
+            if (currentType == 0)                newc = juce::IIRCoefficients::makeLowPass(sr, lastCutoff);
+            else                                 newc = juce::IIRCoefficients::makeHighPass(sr, lastCutoff);
 
-            for (auto &f : monitorFilters)
-                f.setCoefficients(newc);
-            for (auto &f : sample1Filters)
-                f.setCoefficients(newc);
+            for (auto& f : monitorFilters)                f.setCoefficients(newc);
+            for (auto& f : sample1Filters)                f.setCoefficients(newc);
         }
 
         // prepare temporary buffers
@@ -79,7 +73,7 @@ struct LocalAudioCallback : public juce::AudioIODeviceCallback
         juce::AudioBuffer<float> s2Buf(numOutputChannels, numSamples);
         juce::AudioBuffer<float> s3Buf(numOutputChannels, numSamples);
 
-        // clear outputs
+        // clear outputs        <<- meh, if sollte vorn for loop sein....check to fix
         for (int ch = 0; ch < numOutputChannels; ++ch)
             if (outputChannelData[ch] != nullptr)
                 juce::FloatVectorOperations::clear(outputChannelData[ch], numSamples);
@@ -115,11 +109,11 @@ struct LocalAudioCallback : public juce::AudioIODeviceCallback
         // mix inBuf + s1Buf + s2Buf + s3Buf into outputs with per-sample gain multipliers
         for (int ch = 0; ch < numOutputChannels; ++ch)
         {
-            float *out = outputChannelData[ch];
-            const float *inP = inBuf.getReadPointer(ch);
-            const float *s1P = s1Buf.getReadPointer(ch);
-            const float *s2P = s2Buf.getReadPointer(ch);
-            const float *s3P = s3Buf.getReadPointer(ch);
+            float* out = outputChannelData[ch];
+            const float* inP = inBuf.getReadPointer(ch);
+            const float* s1P = s1Buf.getReadPointer(ch);
+            const float* s2P = s2Buf.getReadPointer(ch);
+            const float* s3P = s3Buf.getReadPointer(ch);
             const float g1 = vol1.load();
             const float g2 = vol2.load();
             const float g3 = vol3.load();
@@ -128,15 +122,15 @@ struct LocalAudioCallback : public juce::AudioIODeviceCallback
         }
     }
 
-    juce::Synthesiser &synth1;
-    juce::Synthesiser &synth2;
-    juce::Synthesiser &synth3;
-    std::atomic<bool> &monitorEnabled;
-    std::atomic<float> &cutoffHzRef;
-    std::atomic<float> &vol1;
-    std::atomic<float> &vol2;
-    std::atomic<float> &vol3;
-    std::atomic<int> &filterType;
+    juce::Synthesiser& synth1;
+    juce::Synthesiser& synth2;
+    juce::Synthesiser& synth3;
+    std::atomic<bool>& monitorEnabled;
+    std::atomic<float>& cutoffHzRef;
+    std::atomic<float>& vol1;
+    std::atomic<float>& vol2;
+    std::atomic<float>& vol3;
+    std::atomic<int>& filterType;
 
     std::vector<juce::IIRFilter> monitorFilters, sample1Filters;
     double sampleRate = 44100.0;

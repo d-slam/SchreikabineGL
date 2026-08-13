@@ -5,7 +5,7 @@
 class SettingsComponent : public juce::Component
 {
 public:
-    SettingsComponent(AudioState &state) : audioState(state)
+    SettingsComponent(AudioState& state) : audioState(state)
     {
         setOpaque(true);
         setVisible(true);
@@ -15,24 +15,21 @@ public:
         volSlider1->setRange(0.0, 1.0, 0.001);
         volSlider1->setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 20);
         volSlider1->setValue(audioState.vol1.load(), juce::dontSendNotification);
-        volSlider1->onValueChange = [this]()
-        { audioState.vol1.store((float)volSlider1->getValue()); };
+        volSlider1->onValueChange = [this]() { audioState.vol1.store((float)volSlider1->getValue()); };
 
         volSlider2.reset(new juce::Slider("volSlider2"));
         addAndMakeVisible(volSlider2.get());
         volSlider2->setRange(0.0, 1.0, 0.001);
         volSlider2->setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 20);
         volSlider2->setValue(audioState.vol2.load(), juce::dontSendNotification);
-        volSlider2->onValueChange = [this]()
-        { audioState.vol2.store((float)volSlider2->getValue()); };
+        volSlider2->onValueChange = [this]() { audioState.vol2.store((float)volSlider2->getValue()); };
 
         volSlider3.reset(new juce::Slider("volSlider3"));
         addAndMakeVisible(volSlider3.get());
         volSlider3->setRange(0.0, 1.0, 0.001);
         volSlider3->setTextBoxStyle(juce::Slider::TextBoxRight, false, 60, 20);
         volSlider3->setValue(audioState.vol3.load(), juce::dontSendNotification);
-        volSlider3->onValueChange = [this]()
-        { audioState.vol1.store((float)volSlider3->getValue()); };
+        volSlider3->onValueChange = [this]() { audioState.vol1.store((float)volSlider3->getValue()); };
 
         fileLabel1.reset(new juce::Label("fileLabel1"));
         addAndMakeVisible(fileLabel1.get());
@@ -49,37 +46,22 @@ public:
         fileLabel3->setText("No file", juce::dontSendNotification);
         fileLabel3->setColour(juce::Label::textColourId, juce::Colours::white);
 
-        loadButton1.reset(new juce::TextButton("Load..."));
-        addAndMakeVisible(loadButton1.get());
-
-        loadButton2.reset(new juce::TextButton("Load..."));
-        addAndMakeVisible(loadButton2.get());
-
-        loadButton3.reset(new juce::TextButton("Load..."));
-        addAndMakeVisible(loadButton3.get());
-
-        playButton1.reset(new juce::TextButton("Play Voice"));
-        addAndMakeVisible(playButton1.get());
-
-        playButton2.reset(new juce::TextButton("Play Tinnitus"));
-        addAndMakeVisible(playButton2.get());
-
-        playButton3.reset(new juce::TextButton("Play Voice"));
-        addAndMakeVisible(playButton3.get());
-
-        playBothButton.reset(new juce::TextButton("Play All"));
-        addAndMakeVisible(playBothButton.get());
-
-        stopBothButton.reset(new juce::TextButton("Stop All"));
-        addAndMakeVisible(stopBothButton.get());
+        loadButton1.reset(new juce::TextButton("Load..."));             addAndMakeVisible(loadButton1.get());
+        loadButton2.reset(new juce::TextButton("Load..."));             addAndMakeVisible(loadButton2.get());
+        loadButton3.reset(new juce::TextButton("Load..."));             addAndMakeVisible(loadButton3.get());
+        playButton1.reset(new juce::TextButton("Play Voice"));          addAndMakeVisible(playButton1.get());
+        playButton2.reset(new juce::TextButton("Play Tinnitus"));       addAndMakeVisible(playButton2.get());
+        playButton3.reset(new juce::TextButton("Play Voice"));          addAndMakeVisible(playButton3.get());
+        playBothButton.reset(new juce::TextButton("Play All"));         addAndMakeVisible(playBothButton.get());
+        stopBothButton.reset(new juce::TextButton("Stop All"));         addAndMakeVisible(stopBothButton.get());
 
         monitorButton.reset(new juce::TextButton("Monitor"));
         addAndMakeVisible(monitorButton.get());
         monitorButton->onClick = [this]()
-        {
-            audioState.monitorEnabled.store(!audioState.monitorEnabled.load());
-            monitorButton->setButtonText(audioState.monitorEnabled.load() ? "Monitor: ON" : "Monitor: OFF");
-        };
+            {
+                audioState.monitorEnabled.store(!audioState.monitorEnabled.load());
+                monitorButton->setButtonText(audioState.monitorEnabled.load() ? "Monitor: ON" : "Monitor: OFF");
+            };
     }
     ~SettingsComponent() override
     {
@@ -103,7 +85,7 @@ public:
         monitorButton = nullptr;
     }
 
-    void paint(juce::Graphics &g) override
+    void paint(juce::Graphics& g) override
     {
         // give UI area a subtle different background so controls are visible against main window
         g.fillAll(juce::Colour::fromRGB(48, 58, 64));
@@ -134,26 +116,29 @@ public:
 
     // Expose controls publicly for MainComponent to hook handlers
 
-    std::unique_ptr<juce::Slider> volSlider1;
-    std::unique_ptr<juce::Slider> volSlider2;
-    std::unique_ptr<juce::Slider> volSlider3;
+    std::unique_ptr<juce::TextButton> loadButton1;
+    std::unique_ptr<juce::TextButton> loadButton2;
+    std::unique_ptr<juce::TextButton> loadButton3;
 
     std::unique_ptr<juce::Label> fileLabel1;
     std::unique_ptr<juce::Label> fileLabel2;
     std::unique_ptr<juce::Label> fileLabel3;
 
-    std::unique_ptr<juce::TextButton> loadButton1;
-    std::unique_ptr<juce::TextButton> loadButton2;
-    std::unique_ptr<juce::TextButton> loadButton3;
+    std::unique_ptr<juce::TextButton> playBothButton;
+    std::unique_ptr<juce::TextButton> stopBothButton;
+    std::unique_ptr<juce::TextButton> monitorButton;
 
     std::unique_ptr<juce::TextButton> playButton1;
     std::unique_ptr<juce::TextButton> playButton2;
     std::unique_ptr<juce::TextButton> playButton3;
 
-    std::unique_ptr<juce::TextButton> playBothButton;
-    std::unique_ptr<juce::TextButton> stopBothButton;
-    std::unique_ptr<juce::TextButton> monitorButton;
-
 private:
-    AudioState &audioState;
+
+    AudioState& audioState;
+    std::unique_ptr<juce::Slider> volSlider1;
+    std::unique_ptr<juce::Slider> volSlider2;
+    std::unique_ptr<juce::Slider> volSlider3;
+
+
+
 };
