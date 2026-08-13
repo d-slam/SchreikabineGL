@@ -147,10 +147,10 @@ MainComponent::MainComponent()
     // you add any child components.
     setSize (800, 600); // no-op patch applied
 
-    // Create UI component and audio state early so UI is visible even if audio permission flow delays audio setup
-    audioState = std::make_unique<AudioState>();
-    // allocate UI and transfer ownership to the component hierarchy using std::move
-    auto localUi = std::make_unique<UIComponent>();
+    audioState.reset(new AudioState);
+    auto localUi = std::make_unique<UIComponent>(*audioState);
+
+
     uiComp = std::move (localUi);
     addAndMakeVisible (uiComp.get());
     // ensure UI has initial bounds immediately

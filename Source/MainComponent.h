@@ -38,8 +38,8 @@ private:
     // UI is delegated to UIComponent (defined in UIComponent.h)
     std::unique_ptr<UIComponent> uiComp;
 
-    // audio-shared state (defined in AudioState.h)
     std::unique_ptr<AudioState> audioState;
+    
 
     // custom audio callback for zero-latency input monitoring + synth mixing
     std::unique_ptr<LocalAudioCallback> customAudioCallback;

@@ -138,6 +138,10 @@ public:
         sldFx->setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
         sldFx->setBounds(300, 100, 400, 30);
         sldFx->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 100, 30);
+        sldFx->onValueChange = [this]()
+        {
+            
+        };
 
         lblFx.reset(new juce::Label("lblFx"));
         addAndMakeVisible(lblFx.get());

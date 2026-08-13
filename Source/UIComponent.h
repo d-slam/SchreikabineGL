@@ -3,11 +3,12 @@
 #include "Strings.h"
 #include "MenuComponent.h"
 #include "SettingsComponent.h"
+#include "AudioState.h"
 
 class UIComponent : public juce::Component
 {
 public:
-    UIComponent()
+    UIComponent(AudioState& state): audioState(state)
     {
         // setSize(getParentWidth(), getParentHeight());
 
@@ -56,6 +57,9 @@ public:
     }
 
 private:
+
+    AudioState& audioState;
+
     std::unique_ptr<juce::Slider> maSlider;
 
     std::unique_ptr<juce::TextButton> maButton;
