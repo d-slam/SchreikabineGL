@@ -12,6 +12,8 @@ struct Strings
     juce::String duo;
     juce::String schwerhoerigkeit_1;
     juce::String schwerhoerigkeit_2;
+    juce::String labelSlider;
+
 };
 class Localisation
 {
@@ -23,7 +25,10 @@ public:
             "Eine Person",
             "Zwei Personen",
             juce::String::fromUTF8("Altersschwerhörigkeit"),
-            juce::String::fromUTF8("Hochtonschwerhörigkeit")
+            juce::String::fromUTF8("Hochtonschwerhörigkeit"),
+            juce::String::fromUTF8("Schiebe den Regler nach rechts um schlechter zu hören")
+            
+
 
         };
 
@@ -32,7 +37,9 @@ public:
             "One Person",
             "Two Persons",
             "Age-related high-frequency hearing loss",
-            "Low-frequency hearing loss"
+            "Low-frequency hearing loss",
+            "Move the Fader to the right to hear bad"
+
 
         };
 

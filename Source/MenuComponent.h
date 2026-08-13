@@ -44,7 +44,7 @@ public:
         btnA.reset(new juce::TextButton("btnA"));
         addAndMakeVisible(btnA.get());
         // btnA->setButtonText("btnA_duo");
-        btnA->setBounds(500, 200, 100, 30);
+        btnA->setBounds(100, 200, 100, 30);
     }
     ~DuoMenu() override
     {
@@ -133,8 +133,20 @@ public:
         cbxSelect->addItem(texte.schwerhoerigkeit_2, 2);
         cbxSelect->setSelectedItemIndex(0, false);
 
-        // schreibe am ende strings
+        sldFx.reset(new juce::Slider("sldFx"));
+        addAndMakeVisible(sldFx.get());
+        sldFx->setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
+        sldFx->setBounds(300, 100, 400, 30);
+        sldFx->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 100, 30);
 
+        lblFx.reset(new juce::Label("lblFx"));
+        addAndMakeVisible(lblFx.get());
+        // lblFx->attachToComponent(sldFx.get(),false);
+        lblFx->setColour(juce::Label::textColourId, juce::Colours::black);
+        lblFx->setText(texte.labelSlider, juce::NotificationType::dontSendNotification);
+        lblFx->setBounds(300, 130, 400, 30);
+
+        // schreibe am ende strings
         updateLocalisation(aktuelleSprache);
     }
     ~MenuComponent() override
@@ -143,6 +155,8 @@ public:
         btnDuo = nullptr;
         btnTinnitus = nullptr;
         cbxSelect = nullptr;
+        sldFx = nullptr;
+        lblFx = nullptr;
         btnDeutsch = nullptr;
         btnEnglisch = nullptr;
         soloMenu = nullptr;
@@ -171,6 +185,9 @@ public:
         cbxSelect->changeItemText(1, texte.schwerhoerigkeit_1);
         cbxSelect->changeItemText(2, texte.schwerhoerigkeit_2);
         cbxSelect->setSelectedId(selectedId, juce::dontSendNotification);
+
+        lblFx->setText(texte.labelSlider, juce::NotificationType::dontSendNotification);
+
     }
 
 private:
@@ -179,6 +196,8 @@ private:
 
     std::unique_ptr<juce::TextButton> btnTinnitus;
     std::unique_ptr<juce::ComboBox> cbxSelect;
+    std::unique_ptr<juce::Slider> sldFx;
+    std::unique_ptr<juce::Label> lblFx;
 
     std::unique_ptr<juce::TextButton> btnDeutsch;
     std::unique_ptr<juce::TextButton> btnEnglisch;

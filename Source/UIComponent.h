@@ -47,7 +47,6 @@ public:
 
     void resized() override
     {
-        // mySlider.setBounds()
         menuComponent->setBounds(getLocalBounds());
     }
 
