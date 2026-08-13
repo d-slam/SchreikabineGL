@@ -167,10 +167,10 @@ public:
         btnSolo->setButtonText(texte.solo);
         btnDuo->setButtonText(texte.duo);
 
+        const int selectedId = cbxSelect->getSelectedId();
         cbxSelect->changeItemText(1, texte.schwerhoerigkeit_1);
         cbxSelect->changeItemText(2, texte.schwerhoerigkeit_2);
-        cbxSelect->setSelectedItemIndex(0, false);
-
+        cbxSelect->setSelectedId(selectedId, juce::dontSendNotification);
     }
 
 private:
