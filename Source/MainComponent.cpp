@@ -20,9 +20,7 @@ MainComponent::MainComponent()
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired(juce::RuntimePermissions::recordAudio) && !juce::RuntimePermissions::isGranted(juce::RuntimePermissions::recordAudio))
     {
-        juce::RuntimePermissions::request(juce::RuntimePermissions::recordAudio,
-            [&](bool granted)
-            { setAudioChannels(granted ? 2 : 0, 2); });
+        juce::RuntimePermissions::request(juce::RuntimePermissions::recordAudio, [&](bool granted) { setAudioChannels(granted ? 2 : 0, 2); });
     }
     else
     {
@@ -145,11 +143,7 @@ void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& buffer
 {
 
     // If we're using the custom audio callback, it handles rendering and monitoring.
-    if (useCustomAudioCallback)
-    {
-        bufferToFill.clearActiveBufferRegion();
-        return;
-    }
+    if (useCustomAudioCallback) { bufferToFill.clearActiveBufferRegion();        return; }
 
     // Fallback: render both synths into the buffer (original behaviour)
     bufferToFill.clearActiveBufferRegion();
