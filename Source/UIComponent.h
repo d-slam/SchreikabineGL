@@ -29,10 +29,10 @@ public:
         // addAndMakeVisible(maBox.get());
         // maBox->setBounds(200, 0, 100, 30);
 
-        menuComponent.reset(new MenuComponent(audioState));
+        menuComponent = std::make_unique<MenuComponent>(audioState);
         addAndMakeVisible(menuComponent.get());
 
-        settingsComponent.reset(new SettingsComponent(audioState));
+        settingsComponent = std::make_unique<SettingsComponent>(audioState);
         addAndMakeVisible(settingsComponent.get());
     }
     ~UIComponent() override
