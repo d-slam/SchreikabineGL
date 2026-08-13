@@ -8,7 +8,7 @@ public:
     {
         setOpaque (true);
         setVisible (true);
-        
+
         addAndMakeVisible (loadButton1);
         addAndMakeVisible (playButton1);
         addAndMakeVisible (fileLabel1);
@@ -40,14 +40,6 @@ public:
         addAndMakeVisible (stopBothButton);
         addAndMakeVisible (monitorButton);
 
-        cutoffSlider.setRange (20.0, 20000.0, 1.0);
-        cutoffSlider.setSkewFactorFromMidPoint (1000.0);
-        cutoffSlider.setTextBoxStyle (juce::Slider::TextBoxRight, false, 80, 20);
-        addAndMakeVisible (cutoffSlider);
-
-        filterTypeBox.addItem ("Low-pass", 1);
-        filterTypeBox.addItem ("High-pass", 2);
-        addAndMakeVisible (filterTypeBox);
 
         cutoffLabel.setColour (juce::Label::textColourId, juce::Colours::white);
         addAndMakeVisible (cutoffLabel);
@@ -94,9 +86,7 @@ public:
         auto leftX = getLocalBounds().reduced (8).getX();
         // place monitor and filter controls below the last row (row3)
         monitorButton.setBounds (leftX + 4, row3.getBottom() + 12, 140, 24);
-        cutoffSlider.setBounds (leftX + 152, next.getBottom() + 12, 180, 24);
-        cutoffSlider.setBounds (leftX + 152, row3.getBottom() + 12, 180, 24);
-        filterTypeBox.setBounds (leftX + 152 + 184, row3.getBottom() + 12, 120, 24);
+
         cutoffLabel.setBounds (leftX + 152 + 184 + 124, row3.getBottom() + 12, 80, 24);
     }
 
@@ -120,7 +110,7 @@ public:
     juce::TextButton stopBothButton { "Stop Both" };
     juce::TextButton monitorButton { "Monitor Input" };
 
-    juce::Slider cutoffSlider;
+
     juce::Label cutoffLabel;
-    juce::ComboBox filterTypeBox;
+
 };

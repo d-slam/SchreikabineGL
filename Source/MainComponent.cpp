@@ -9,11 +9,12 @@ MainComponent::MainComponent()
     setSize (800, 600); // no-op patch applied
 
     audioState.reset(new AudioState);
+
+
     auto localUi = std::make_unique<UIComponent>(*audioState);
-
-
     uiComp = std::move (localUi);
     addAndMakeVisible (uiComp.get());
+    
     // ensure UI has initial bounds immediately
     uiComp->setBounds (getLocalBounds());
     uiComp->repaint();
@@ -31,8 +32,8 @@ MainComponent::MainComponent()
     // uiComp->settingsComponent->cutoffSlider.setValue (audioState->cutoffHz.load(), juce::dontSendNotification);
     // uiComp->settingsComponent->cutoffSlider.onValueChange = [this]() { audioState->cutoffHz.store ((float) uiComp->settingsComponent->cutoffSlider.getValue()); uiComp->settingsComponent->cutoffLabel.setText (juce::String ((int) audioState->cutoffHz.load()) + " Hz", juce::dontSendNotification); };
 
-    uiComp->settingsComponent->filterTypeBox.setSelectedId (audioState->filterType.load() == 0 ? 1 : 2, juce::dontSendNotification);
-    uiComp->settingsComponent->filterTypeBox.onChange = [this]() { audioState->filterType.store (uiComp->settingsComponent->filterTypeBox.getSelectedId() == 1 ? 0 : 1); };
+    // uiComp->settingsComponent->filterTypeBox.setSelectedId (audioState->filterType.load() == 0 ? 1 : 2, juce::dontSendNotification);
+    // uiComp->settingsComponent->filterTypeBox.onChange = [this]() { audioState->filterType.store (uiComp->settingsComponent->filterTypeBox.getSelectedId() == 1 ? 0 : 1); };
 
     uiComp->settingsComponent->monitorButton.onClick = [this]() { audioState->monitorEnabled.store (! audioState->monitorEnabled.load()); uiComp->settingsComponent->monitorButton.setButtonText (audioState->monitorEnabled.load() ? "Monitor: ON" : "Monitor: OFF"); };
 
