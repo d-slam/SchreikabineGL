@@ -18,21 +18,23 @@ struct Strings
 class Localisation
 {
 public:
-    static const Strings &get(Sprache sprache)
+    static const Strings& get(Sprache sprache)
     {
-        static const Strings deutsch{
+        static const Strings deutsch
+        {
 
             "Eine Person",
             "Zwei Personen",
             juce::String::fromUTF8("Altersschwerhörigkeit"),
             juce::String::fromUTF8("Hochtonschwerhörigkeit"),
             juce::String::fromUTF8("Schiebe den Regler nach rechts um schlechter zu hören")
-            
+
 
 
         };
 
-        static const Strings englisch{
+        static const Strings englisch
+        {
 
             "One Person",
             "Two Persons",

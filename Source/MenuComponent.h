@@ -116,11 +116,15 @@ public:
         btnEnglisch->setBounds(400, 0, 100, 30);
         btnEnglisch->onClick = [this]() { updateLocalisation(Sprache::ENGLISCH); };
 
-        btnTinnitus.reset(new juce::TextButton("btnTinnitus")); // globale elemente
+        btnTinnitus.reset(new juce::TextButton("btnTinnitus"));
         addAndMakeVisible(btnTinnitus.get());
         btnTinnitus->setButtonText("Tinnitus");
         btnTinnitus->setBounds(0, 100, 100, 30);
-        btnTinnitus->onClick = [this]() {};
+        btnTinnitus->setClickingTogglesState(true);
+        btnTinnitus->onClick = [this]
+            {
+                btnTinnitus->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
+            };
 
         Sprache aktuelleSprache = Sprache::DEUTSCH; // Globale Sprache
         const auto& texte = Localisation::get(aktuelleSprache);
