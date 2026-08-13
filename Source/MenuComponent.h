@@ -17,7 +17,7 @@ public:
     {
         btnA = nullptr;
     }
-    void paint(juce::Graphics &g) override
+    void paint(juce::Graphics& g) override
     {
         g.fillAll(juce::Colours::aqua);
         g.setColour(juce::Colours::black);
@@ -28,7 +28,7 @@ public:
     }
     void updateLocalisation(Sprache s)
     {
-        const auto &texte = Localisation::get(s);
+        const auto& texte = Localisation::get(s);
         btnA->setButtonText(texte.solo);
     }
 
@@ -51,7 +51,7 @@ public:
     {
         btnA = nullptr;
     }
-    void paint(juce::Graphics &g) override
+    void paint(juce::Graphics& g) override
     {
         g.fillAll(juce::Colours::blueviolet);
         g.setColour(juce::Colours::black);
@@ -62,7 +62,7 @@ public:
     }
     void updateLocalisation(Sprache s)
     {
-        const auto &texte = Localisation::get(s);
+        const auto& texte = Localisation::get(s);
         btnA->setButtonText(texte.duo);
     }
 
@@ -74,7 +74,7 @@ private:
 class MenuComponent : public juce::Component
 {
 public:
-    MenuComponent(AudioState &state) : audioState(state)
+    MenuComponent(AudioState& state) : audioState(state)
     {
         soloMenu.reset(new SoloMenu); // menu
         addAndMakeVisible(soloMenu.get());
@@ -89,34 +89,33 @@ public:
         // btnSolo->setButtonText("solo");
         btnSolo->setBounds(0, 0, 100, 30);
         btnSolo->onClick = [this]()
-        {
-            soloMenu->setVisible(true);
-            duoMenu->setVisible(false);
-        };
+            {
+                soloMenu->setVisible(true);
+                duoMenu->setVisible(false);
+            };
 
         btnDuo.reset(new juce::TextButton("btnDue"));
         addAndMakeVisible(btnDuo.get());
         // btnDuo->setButtonText("duo");
         btnDuo->setBounds(100, 0, 100, 30);
         btnDuo->onClick = [this]()
-        {
-            soloMenu->setVisible(false);
-            duoMenu->setVisible(true);
-        };
+            {
+                soloMenu->setVisible(false);
+                duoMenu->setVisible(true);
+            };
 
         btnDeutsch.reset(new juce::TextButton("btnDeutsch")); // sprache
         addAndMakeVisible(btnDeutsch.get());
         btnDeutsch->setButtonText("Deutsch");
         btnDeutsch->setBounds(300, 0, 100, 30);
         btnDeutsch->onClick = [this]()
-        { updateLocalisation(Sprache::DEUTSCH); };
+            { updateLocalisation(Sprache::DEUTSCH); };
 
         btnEnglisch.reset(new juce::TextButton("btnEnglisch"));
         addAndMakeVisible(btnEnglisch.get());
         btnEnglisch->setButtonText("Englisch");
         btnEnglisch->setBounds(400, 0, 100, 30);
-        btnEnglisch->onClick = [this]()
-        { updateLocalisation(Sprache::ENGLISCH); };
+        btnEnglisch->onClick = [this]() { updateLocalisation(Sprache::ENGLISCH); };
 
         btnTinnitus.reset(new juce::TextButton("btnTinnitus")); // globale elemente
         addAndMakeVisible(btnTinnitus.get());
@@ -125,7 +124,7 @@ public:
         btnTinnitus->onClick = [this]() {};
 
         Sprache aktuelleSprache = Sprache::DEUTSCH; // Globale Sprache
-        const auto &texte = Localisation::get(aktuelleSprache);
+        const auto& texte = Localisation::get(aktuelleSprache);
 
         cbxSelect.reset(new juce::ComboBox("cbxSelect"));
         addAndMakeVisible(cbxSelect.get());
@@ -133,8 +132,7 @@ public:
         cbxSelect->addItem(texte.schwerhoerigkeit_1, 1);
         cbxSelect->addItem(texte.schwerhoerigkeit_2, 2);
         cbxSelect->setSelectedId(audioState.filterType.load() == 0 ? 1 : 2, juce::dontSendNotification); // bullshit ternärer operator...maybe fix
-        cbxSelect->onChange = [this]()
-        { audioState.filterType.store(cbxSelect->getSelectedId() == 1 ? 0 : 1); };  // oder greif de scheise net un
+        cbxSelect->onChange = [this]() { audioState.filterType.store(cbxSelect->getSelectedId() == 1 ? 0 : 1); };  // oder greif de scheise net un
 
         sldFx.reset(new juce::Slider("sldFx"));
         addAndMakeVisible(sldFx.get());
@@ -144,8 +142,7 @@ public:
         sldFx->setRange(30.0f, 20000.0f, 1.0);
         sldFx->setValue(audioState.cutoffHz.load());
         sldFx->setSkewFactorFromMidPoint(5000.0f); // zu niedriger skew -> fader ruckelt
-        sldFx->onValueChange = [this]()
-        { audioState.cutoffHz.store(sldFx->getValue()); }; // wir bleibn bei cutoffHz...suscht muasi in localAudioCallback umbaun
+        sldFx->onValueChange = [this]() { audioState.cutoffHz.store(sldFx->getValue()); }; // wir bleibn bei cutoffHz...suscht muasi in localAudioCallback umbaun
 
         lblFx.reset(new juce::Label("lblFx"));
         addAndMakeVisible(lblFx.get());
@@ -170,7 +167,7 @@ public:
         soloMenu = nullptr;
         duoMenu = nullptr;
     }
-    void paint(juce::Graphics &g) override
+    void paint(juce::Graphics& g) override
     {
         g.fillAll(juce::Colours::skyblue);
         g.setColour(juce::Colours::black);
@@ -184,7 +181,7 @@ public:
 
     void updateLocalisation(Sprache s)
     {
-        const auto &texte = Localisation::get(s);
+        const auto& texte = Localisation::get(s);
 
         btnSolo->setButtonText(texte.solo);
         btnDuo->setButtonText(texte.duo);
@@ -202,7 +199,7 @@ public:
     }
 
 private:
-    AudioState &audioState;
+    AudioState& audioState;
 
     std::unique_ptr<juce::TextButton> btnSolo;
     std::unique_ptr<juce::TextButton> btnDuo;
