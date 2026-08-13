@@ -84,7 +84,7 @@ public:
         soloMenu->setVisible(true);
         duoMenu->setVisible(false);
 
-        btnSolo.reset(new juce::TextButton("btnSolo"));
+        btnSolo = std::make_unique<juce::TextButton>("btnSolo");
         addAndMakeVisible(btnSolo.get());
         // btnSolo->setButtonText("solo");
         btnSolo->setBounds(0, 0, 100, 30);
@@ -94,7 +94,7 @@ public:
                 duoMenu->setVisible(false);
             };
 
-        btnDuo.reset(new juce::TextButton("btnDue"));
+        btnDuo = std::make_unique<juce::TextButton>("btnDuo");
         addAndMakeVisible(btnDuo.get());
         // btnDuo->setButtonText("duo");
         btnDuo->setBounds(100, 0, 100, 30);
@@ -104,19 +104,19 @@ public:
                 duoMenu->setVisible(true);
             };
 
-        btnDeutsch.reset(new juce::TextButton("btnDeutsch")); // sprache
+        btnDeutsch = std::make_unique<juce::TextButton>("btnDeutsch");
         addAndMakeVisible(btnDeutsch.get());
         btnDeutsch->setButtonText("Deutsch");
         btnDeutsch->setBounds(300, 0, 100, 30);
         btnDeutsch->onClick = [this]() { updateLocalisation(Sprache::DEUTSCH); };
 
-        btnEnglisch.reset(new juce::TextButton("btnEnglisch"));
+        btnEnglisch = std::make_unique<juce::TextButton>("btnEnglisch");
         addAndMakeVisible(btnEnglisch.get());
         btnEnglisch->setButtonText("Englisch");
         btnEnglisch->setBounds(400, 0, 100, 30);
         btnEnglisch->onClick = [this]() { updateLocalisation(Sprache::ENGLISCH); };
 
-        btnTinnitus.reset(new juce::TextButton("btnTinnitus"));
+        btnTinnitus = std::make_unique<juce::TextButton>("btnTinnitus");
         addAndMakeVisible(btnTinnitus.get());
         btnTinnitus->setButtonText("Tinnitus");
         btnTinnitus->setBounds(0, 100, 100, 30);
@@ -129,7 +129,7 @@ public:
         Sprache aktuelleSprache = Sprache::DEUTSCH; // Globale Sprache
         const auto& texte = Localisation::get(aktuelleSprache);
 
-        cbxSelect.reset(new juce::ComboBox("cbxSelect"));
+        cbxSelect = std::make_unique<juce::ComboBox>("cbxSelect");
         addAndMakeVisible(cbxSelect.get());
         cbxSelect->setBounds(100, 100, 200, 30);
         cbxSelect->addItem(texte.schwerhoerigkeit_1, 1);
@@ -137,7 +137,7 @@ public:
         cbxSelect->setSelectedId(audioState.filterType.load() == 0 ? 1 : 2, juce::dontSendNotification); // bullshit ternärer operator...maybe fix
         cbxSelect->onChange = [this]() { audioState.filterType.store(cbxSelect->getSelectedId() == 1 ? 0 : 1); };  // oder greif de scheise net un
 
-        sldFx.reset(new juce::Slider("sldFx"));
+        sldFx = std::make_unique<juce::Slider>("sldFx");
         addAndMakeVisible(sldFx.get());
         sldFx->setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
         sldFx->setBounds(300, 100, 400, 30);
@@ -147,7 +147,7 @@ public:
         sldFx->setSkewFactorFromMidPoint(5000.0f); // zu niedriger skew -> fader ruckelt
         sldFx->onValueChange = [this]() { audioState.cutoffHz.store(sldFx->getValue()); }; // wir bleibn bei cutoffHz...suscht muasi in localAudioCallback umbaun
 
-        lblFx.reset(new juce::Label("lblFx"));
+        lblFx = std::make_unique<juce::Label>("lblFx");
         addAndMakeVisible(lblFx.get());
         // lblFx->attachToComponent(sldFx.get(),false);
         lblFx->setColour(juce::Label::textColourId, juce::Colours::black);
