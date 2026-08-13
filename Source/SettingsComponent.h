@@ -1,7 +1,4 @@
-
-
 #pragma once
-
 #include <JuceHeader.h>
 
 class SettingsComponent : public juce::Component
@@ -11,6 +8,7 @@ public:
     {
         setOpaque (true);
         setVisible (true);
+        
         addAndMakeVisible (loadButton1);
         addAndMakeVisible (playButton1);
         addAndMakeVisible (fileLabel1);

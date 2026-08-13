@@ -52,7 +52,7 @@ public:
     void resized() override
     {
         menuComponent->setBounds(getLocalBounds());
-        settingsComponent->setBounds(getLocalBounds().removeFromBottom(getHeight() / 2));
+        settingsComponent->setBounds(getLocalBounds().removeFromBottom(getHeight() / 3));
     }
 
 private:
