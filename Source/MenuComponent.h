@@ -108,8 +108,7 @@ public:
         addAndMakeVisible(btnDeutsch.get());
         btnDeutsch->setButtonText("Deutsch");
         btnDeutsch->setBounds(300, 0, 100, 30);
-        btnDeutsch->onClick = [this]()
-            { updateLocalisation(Sprache::DEUTSCH); };
+        btnDeutsch->onClick = [this]() { updateLocalisation(Sprache::DEUTSCH); };
 
         btnEnglisch.reset(new juce::TextButton("btnEnglisch"));
         addAndMakeVisible(btnEnglisch.get());
