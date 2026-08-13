@@ -29,7 +29,7 @@ public:
         // addAndMakeVisible(maBox.get());
         // maBox->setBounds(200, 0, 100, 30);
 
-        menuComponent.reset(new MenuComponent);
+        menuComponent.reset(new MenuComponent(audioState));
         addAndMakeVisible(menuComponent.get());
 
         settingsComponent.reset(new SettingsComponent);

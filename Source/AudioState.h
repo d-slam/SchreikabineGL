@@ -13,5 +13,5 @@ struct AudioState
 
     /////////////////
 
-    std::atomic<float> fx{1.0f};
+    // std::atomic<double> fx {20000};
 };

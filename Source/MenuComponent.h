@@ -1,5 +1,6 @@
 #pragma once
 #include <JuceHeader.h>
+#include "AudioState.h"
 
 // solo
 class SoloMenu : public juce::Component
@@ -73,7 +74,7 @@ private:
 class MenuComponent : public juce::Component
 {
 public:
-    MenuComponent()
+    MenuComponent(AudioState &state) : audioState(state)
     {
         soloMenu.reset(new SoloMenu); // menu
         addAndMakeVisible(soloMenu.get());
@@ -138,10 +139,12 @@ public:
         sldFx->setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
         sldFx->setBounds(300, 100, 400, 30);
         sldFx->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 100, 30);
-        sldFx->setRange(20.0, 20000.0, 1.0);
-        sldFx->setSkewFactorFromMidPoint(1000.0);
-        sldFx->onValueChange = [this]() {
-
+        sldFx->setRange(30.0f, 20000.0f, 1.0);
+        sldFx->setValue(audioState.cutoffHz.load());
+        sldFx->setSkewFactorFromMidPoint(5000.0f);   // zu niedriger skew -> fader ruckelt
+        sldFx->onValueChange = [this]()
+        {
+            audioState.cutoffHz.store(sldFx->getValue());
         };
 
         lblFx.reset(new juce::Label("lblFx"));
@@ -199,6 +202,8 @@ public:
     }
 
 private:
+    AudioState &audioState;
+
     std::unique_ptr<juce::TextButton> btnSolo;
     std::unique_ptr<juce::TextButton> btnDuo;
 
