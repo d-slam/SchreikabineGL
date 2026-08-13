@@ -14,26 +14,21 @@ MainComponent::MainComponent()
     auto localUi = std::make_unique<UIComponent>(*audioState);
     uiComp = std::move (localUi);
     addAndMakeVisible (uiComp.get());
-    
+
     // ensure UI has initial bounds immediately
     uiComp->setBounds (getLocalBounds());
     uiComp->repaint();
 
     // initialize UI controls from audioState
-    uiComp->settingsComponent->volSlider1.setValue (audioState->vol1.load(), juce::dontSendNotification);
-    uiComp->settingsComponent->volSlider1.onValueChange = [this]() { audioState->vol1.store ((float) uiComp->settingsComponent->volSlider1.getValue()); };
+    uiComp->settingsComponent->volSlider1->setValue (audioState->vol1.load(), juce::dontSendNotification);
+    uiComp->settingsComponent->volSlider1->onValueChange = [this]() { audioState->vol1.store ((float) uiComp->settingsComponent->volSlider1->getValue()); };
 
-    uiComp->settingsComponent->volSlider2.setValue (audioState->vol2.load(), juce::dontSendNotification);
-    uiComp->settingsComponent->volSlider2.onValueChange = [this]() { audioState->vol2.store ((float) uiComp->settingsComponent->volSlider2.getValue()); };
+    uiComp->settingsComponent->volSlider2->setValue (audioState->vol2.load(), juce::dontSendNotification);
+    uiComp->settingsComponent->volSlider2->onValueChange = [this]() { audioState->vol2.store ((float) uiComp->settingsComponent->volSlider2->getValue()); };
 
-    uiComp->settingsComponent->volSlider3.setValue (audioState->vol3.load(), juce::dontSendNotification);
-    uiComp->settingsComponent->volSlider3.onValueChange = [this]() { audioState->vol3.store ((float) uiComp->settingsComponent->volSlider3.getValue()); };
+    uiComp->settingsComponent->volSlider3->setValue (audioState->vol3.load(), juce::dontSendNotification);
+    uiComp->settingsComponent->volSlider3->onValueChange = [this]() { audioState->vol3.store ((float) uiComp->settingsComponent->volSlider3->getValue()); };
 
-    // uiComp->settingsComponent->cutoffSlider.setValue (audioState->cutoffHz.load(), juce::dontSendNotification);
-    // uiComp->settingsComponent->cutoffSlider.onValueChange = [this]() { audioState->cutoffHz.store ((float) uiComp->settingsComponent->cutoffSlider.getValue()); uiComp->settingsComponent->cutoffLabel.setText (juce::String ((int) audioState->cutoffHz.load()) + " Hz", juce::dontSendNotification); };
-
-    // uiComp->settingsComponent->filterTypeBox.setSelectedId (audioState->filterType.load() == 0 ? 1 : 2, juce::dontSendNotification);
-    // uiComp->settingsComponent->filterTypeBox.onChange = [this]() { audioState->filterType.store (uiComp->settingsComponent->filterTypeBox.getSelectedId() == 1 ? 0 : 1); };
 
     uiComp->settingsComponent->monitorButton.onClick = [this]() { audioState->monitorEnabled.store (! audioState->monitorEnabled.load()); uiComp->settingsComponent->monitorButton.setButtonText (audioState->monitorEnabled.load() ? "Monitor: ON" : "Monitor: OFF"); };
 
