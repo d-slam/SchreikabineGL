@@ -75,7 +75,7 @@ class MenuComponent : public juce::Component
 public:
     MenuComponent()
     {
-        soloMenu.reset(new SoloMenu);           //menu
+        soloMenu.reset(new SoloMenu); // menu
         addAndMakeVisible(soloMenu.get());
         duoMenu.reset(new DuoMenu);
         addAndMakeVisible(duoMenu.get());
@@ -103,7 +103,7 @@ public:
             duoMenu->setVisible(true);
         };
 
-        btnDeutsch.reset(new juce::TextButton("btnDeutsch"));       //sprache
+        btnDeutsch.reset(new juce::TextButton("btnDeutsch")); // sprache
         addAndMakeVisible(btnDeutsch.get());
         btnDeutsch->setButtonText("Deutsch");
         btnDeutsch->setBounds(300, 0, 100, 30);
@@ -117,7 +117,7 @@ public:
         btnEnglisch->onClick = [this]()
         { updateLocalisation(Sprache::ENGLISCH); };
 
-        btnTinnitus.reset(new juce::TextButton("btnTinnitus"));     //globale elemente
+        btnTinnitus.reset(new juce::TextButton("btnTinnitus")); // globale elemente
         addAndMakeVisible(btnTinnitus.get());
         btnTinnitus->setButtonText("Tinnitus");
         btnTinnitus->setBounds(0, 100, 100, 30);
@@ -138,9 +138,10 @@ public:
         sldFx->setSliderStyle(juce::Slider::SliderStyle::LinearHorizontal);
         sldFx->setBounds(300, 100, 400, 30);
         sldFx->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::NoTextBox, true, 100, 30);
-        sldFx->onValueChange = [this]()
-        {
-            
+        sldFx->setRange(20.0, 20000.0, 1.0);
+        sldFx->setSkewFactorFromMidPoint(1000.0);
+        sldFx->onValueChange = [this]() {
+
         };
 
         lblFx.reset(new juce::Label("lblFx"));
@@ -195,7 +196,6 @@ public:
         // call kinder
         soloMenu->updateLocalisation(s);
         duoMenu->updateLocalisation(s);
-
     }
 
 private:

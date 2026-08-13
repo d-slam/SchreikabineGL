@@ -4,6 +4,7 @@
 #include <memory>
 #include "UIComponent.h"
 #include "AudioState.h" 
+#include "LocalAudioCallback.h"
 // forward-declare the audio callback type defined in the cpp file
 struct LocalAudioCallback;
 
