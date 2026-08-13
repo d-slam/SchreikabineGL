@@ -17,28 +17,12 @@ MainComponent::MainComponent()
     uiComp->setBounds(getLocalBounds());
     uiComp->repaint();
 
-    // initialize UI controls from audioState
-    uiComp->settingsComponent->volSlider1->setValue(audioState->vol1.load(), juce::dontSendNotification);
-    uiComp->settingsComponent->volSlider1->onValueChange = [this]()
-    { audioState->vol1.store((float)uiComp->settingsComponent->volSlider1->getValue()); };
-
-    uiComp->settingsComponent->volSlider2->setValue(audioState->vol2.load(), juce::dontSendNotification);
-    uiComp->settingsComponent->volSlider2->onValueChange = [this]()
-    { audioState->vol2.store((float)uiComp->settingsComponent->volSlider2->getValue()); };
-
-    uiComp->settingsComponent->volSlider3->setValue(audioState->vol3.load(), juce::dontSendNotification);
-    uiComp->settingsComponent->volSlider3->onValueChange = [this]()
-    { audioState->vol3.store((float)uiComp->settingsComponent->volSlider3->getValue()); };
-
-    uiComp->settingsComponent->monitorButton->onClick = [this]()
-    { audioState->monitorEnabled.store (! audioState->monitorEnabled.load()); uiComp->settingsComponent->monitorButton->setButtonText (audioState->monitorEnabled.load() ? "Monitor: ON" : "Monitor: OFF"); };
-
     // Some platforms require permissions to open input channels so request that here
     if (juce::RuntimePermissions::isRequired(juce::RuntimePermissions::recordAudio) && !juce::RuntimePermissions::isGranted(juce::RuntimePermissions::recordAudio))
     {
         juce::RuntimePermissions::request(juce::RuntimePermissions::recordAudio,
-                                          [&](bool granted)
-                                          { setAudioChannels(granted ? 2 : 0, 2); });
+            [&](bool granted)
+            { setAudioChannels(granted ? 2 : 0, 2); });
     }
     else
     {
@@ -62,69 +46,66 @@ MainComponent::MainComponent()
 
         // Callbacks (wire UI to MainComponent logic)
         uiComp->settingsComponent->loadButton1->onClick = [this]()
-        {
-            auto chooser = std::make_shared<juce::FileChooser>("Select a WAV file to load", juce::File(), "*.wav");
-            chooser->launchAsync(juce::FileBrowserComponent::openMode, [this, chooser](const juce::FileChooser &fc)
-                                 {
-                auto f = fc.getResult();
-                juce::MessageManager::callAsync ([this, f]()
-                {
-                    addSampleFromFile (f, sampleNote1);
-                    uiComp->settingsComponent->fileLabel1->setText (f.getFileName(), juce::dontSendNotification);
-                }); });
-        };
+            {
+                auto chooser = std::make_shared<juce::FileChooser>("Select a WAV file to load", juce::File(), "*.wav");
+                chooser->launchAsync(juce::FileBrowserComponent::openMode, [this, chooser](const juce::FileChooser& fc)
+                    {
+                        auto f = fc.getResult();
+                        juce::MessageManager::callAsync([this, f]()
+                            {
+                                addSampleFromFile(f, sampleNote1);
+                                uiComp->settingsComponent->fileLabel1->setText(f.getFileName(), juce::dontSendNotification);
+                            }); });
+            };
 
         uiComp->settingsComponent->loadButton2->onClick = [this]()
-        {
-            auto chooser = std::make_shared<juce::FileChooser>("Select a WAV file to load", juce::File(), "*.wav");
-            chooser->launchAsync(juce::FileBrowserComponent::openMode, [this, chooser](const juce::FileChooser &fc)
-                                 {
-                auto f = fc.getResult();
-                juce::MessageManager::callAsync ([this, f]()
-                {
-                    addSampleFromFile (f, sampleNote2);
-                    uiComp->settingsComponent->fileLabel2->setText (f.getFileName(), juce::dontSendNotification);
-                }); });
-        };
+            {
+                auto chooser = std::make_shared<juce::FileChooser>("Select a WAV file to load", juce::File(), "*.wav");
+                chooser->launchAsync(juce::FileBrowserComponent::openMode, [this, chooser](const juce::FileChooser& fc)
+                    {
+                        auto f = fc.getResult();
+                        juce::MessageManager::callAsync([this, f]()
+                            {
+                                addSampleFromFile(f, sampleNote2);
+                                uiComp->settingsComponent->fileLabel2->setText(f.getFileName(), juce::dontSendNotification);
+                            }); });
+            };
 
         uiComp->settingsComponent->loadButton3->onClick = [this]()
-        {
-            auto chooser = std::make_shared<juce::FileChooser>("Select a WAV file to load", juce::File(), "*.wav");
-            chooser->launchAsync(juce::FileBrowserComponent::openMode, [this, chooser](const juce::FileChooser &fc)
-                                 {
-                auto f = fc.getResult();
-                juce::MessageManager::callAsync ([this, f]()
-                {
-                    addSampleFromFile (f, sampleNote3);
-                    uiComp->settingsComponent->fileLabel3->setText (f.getFileName(), juce::dontSendNotification);
-                }); });
-        };
+            {
+                auto chooser = std::make_shared<juce::FileChooser>("Select a WAV file to load", juce::File(), "*.wav");
+                chooser->launchAsync(juce::FileBrowserComponent::openMode, [this, chooser](const juce::FileChooser& fc)
+                    {
+                        auto f = fc.getResult();
+                        juce::MessageManager::callAsync([this, f]()
+                            {
+                                addSampleFromFile(f, sampleNote3);
+                                uiComp->settingsComponent->fileLabel3->setText(f.getFileName(), juce::dontSendNotification);
+                            }); });
+            };
 
         // Use constant velocity=1.0f and control loudness via audioState vol1/vol2/vol3 only
-        uiComp->settingsComponent->playButton1->onClick = [this]()
-        { synth1.noteOn(1, sampleNote1, 1.0f); };
-        uiComp->settingsComponent->playButton2->onClick = [this]()
-        { synth2.noteOn(1, sampleNote2, 1.0f); };
-        uiComp->settingsComponent->playButton3->onClick = [this]()
-        { synth3.noteOn(1, sampleNote3, 1.0f); };
+        uiComp->settingsComponent->playButton1->onClick = [this]() { synth1.noteOn(1, sampleNote1, 1.0f); };
+        uiComp->settingsComponent->playButton2->onClick = [this]() { synth2.noteOn(1, sampleNote2, 1.0f); };
+        uiComp->settingsComponent->playButton3->onClick = [this]() { synth3.noteOn(1, sampleNote3, 1.0f); };
         uiComp->settingsComponent->playBothButton->onClick = [this]()
-        {
-            synth1.noteOn(1, sampleNote1, 1.0f);
-            synth2.noteOn(1, sampleNote2, 1.0f);
-            synth3.noteOn(1, sampleNote3, 1.0f);
-        };
+            {
+                synth1.noteOn(1, sampleNote1, 1.0f);
+                synth2.noteOn(1, sampleNote2, 1.0f);
+                synth3.noteOn(1, sampleNote3, 1.0f);
+            };
 
         uiComp->settingsComponent->stopBothButton->onClick = [this]()
-        {
-            // try to stop the specific notes immediately
-            synth1.noteOff(1, sampleNote1, 0.0f, false);
-            synth2.noteOff(1, sampleNote2, 0.0f, false);
-            synth3.noteOff(1, sampleNote3, 0.0f, false);
-            // ensure any remaining voices on channel 1 are stopped
-            synth1.allNotesOff(1, false);
-            synth2.allNotesOff(1, false);
-            synth3.allNotesOff(1, false);
-        };
+            {
+                // try to stop the specific notes immediately
+                synth1.noteOff(1, sampleNote1, 0.0f, false);
+                synth2.noteOff(1, sampleNote2, 0.0f, false);
+                synth3.noteOff(1, sampleNote3, 0.0f, false);
+                // ensure any remaining voices on channel 1 are stopped
+                synth1.allNotesOff(1, false);
+                synth2.allNotesOff(1, false);
+                synth3.allNotesOff(1, false);
+            };
 
         // UI has its own elements; nothing else to do here
 
@@ -161,7 +142,7 @@ void MainComponent::prepareToPlay(int samplesPerBlockExpected, double sampleRate
     synth2.setCurrentPlaybackSampleRate(sampleRate);
 }
 
-void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo &bufferToFill)
+void MainComponent::getNextAudioBlock(const juce::AudioSourceChannelInfo& bufferToFill)
 {
 
     // If we're using the custom audio callback, it handles rendering and monitoring.
@@ -183,7 +164,7 @@ void MainComponent::releaseResources()
 }
 
 //==============================================================================
-void MainComponent::paint(juce::Graphics &g)
+void MainComponent::paint(juce::Graphics& g)
 {
     // (Our component is opaque, so we must completely fill the background with a solid colour)
     g.fillAll(getLookAndFeel().findColour(juce::ResizableWindow::backgroundColourId));
@@ -200,7 +181,7 @@ void MainComponent::resized()
         uiComp->setBounds(getLocalBounds());
 }
 // helper: add sample file as a SamplerSound to the synth
-void MainComponent::addSampleFromFile(const juce::File &f, int rootNote)
+void MainComponent::addSampleFromFile(const juce::File& f, int rootNote)
 {
     if (!f.existsAsFile())
         return;
@@ -224,7 +205,7 @@ void MainComponent::addSampleFromFile(const juce::File &f, int rootNote)
         synth3.addSound(new juce::SamplerSound(f.getFileName(), *reader, noteMap, rootNote, attack, release, 10.0));
 }
 
-void MainComponent::autoLoadSamplesFromFolder(const juce::File &folder)
+void MainComponent::autoLoadSamplesFromFolder(const juce::File& folder)
 {
     if (!folder.exists() || !folder.isDirectory())
         return;

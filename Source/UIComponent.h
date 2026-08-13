@@ -32,7 +32,7 @@ public:
         menuComponent.reset(new MenuComponent(audioState));
         addAndMakeVisible(menuComponent.get());
 
-        settingsComponent.reset(new SettingsComponent);
+        settingsComponent.reset(new SettingsComponent(audioState));
         addAndMakeVisible(settingsComponent.get());
     }
     ~UIComponent() override
