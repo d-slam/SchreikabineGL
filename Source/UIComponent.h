@@ -2,6 +2,7 @@
 #include <JuceHeader.h>
 #include "Strings.h"
 #include "MenuComponent.h"
+#include "SettingsComponent.h"
 
 class UIComponent : public juce::Component
 {
@@ -12,23 +13,26 @@ public:
 
         // const auto& texte = Localisation::get(Sprache::DEUTSCH);
 
-        maSlider.reset(new juce::Slider("maSlider"));
-        addAndMakeVisible(maSlider.get());
-        maSlider->setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
-        maSlider->setBounds(0, 0, 100, 500);
-        maSlider->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 30);
+        // maSlider.reset(new juce::Slider("maSlider"));
+        // addAndMakeVisible(maSlider.get());
+        // maSlider->setSliderStyle(juce::Slider::SliderStyle::LinearVertical);
+        // maSlider->setBounds(0, 0, 100, 500);
+        // maSlider->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, true, 100, 30);
 
-        maButton.reset(new juce::TextButton("maButton"));
-        addAndMakeVisible(maButton.get());
-        maButton->setButtonText("maButton");
-        maButton->setBounds(100, 0, 100, 30);
+        // maButton.reset(new juce::TextButton("maButton"));
+        // addAndMakeVisible(maButton.get());
+        // maButton->setButtonText("maButton");
+        // maButton->setBounds(100, 0, 100, 30);
 
-        maBox.reset(new juce::ComboBox("maBox"));
-        addAndMakeVisible(maBox.get());
-        maBox->setBounds(200, 0, 100, 30);
+        // maBox.reset(new juce::ComboBox("maBox"));
+        // addAndMakeVisible(maBox.get());
+        // maBox->setBounds(200, 0, 100, 30);
 
         menuComponent.reset(new MenuComponent);
         addAndMakeVisible(menuComponent.get());
+
+        settingsComponent.reset(new SettingsComponent);
+        addAndMakeVisible(settingsComponent.get());
     }
     ~UIComponent() override
     {
@@ -48,6 +52,7 @@ public:
     void resized() override
     {
         menuComponent->setBounds(getLocalBounds());
+        settingsComponent->setBounds(getLocalBounds().removeFromBottom(getHeight() / 2));
     }
 
 private:
@@ -58,4 +63,6 @@ private:
     std::unique_ptr<juce::ComboBox> maBox;
 
     std::unique_ptr<MenuComponent> menuComponent;
+
+    std::unique_ptr<SettingsComponent> settingsComponent;
 };
