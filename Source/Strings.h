@@ -26,7 +26,7 @@ public:
             "Eine Person",
             "Zwei Personen",
             juce::String::fromUTF8("Altersschwerhörigkeit"),
-            juce::String::fromUTF8("Hochtonschwerhörigkeit"),
+            juce::String::fromUTF8("Tieftonschwerhörigkeit"),
             juce::String::fromUTF8("Schiebe den Regler nach rechts um schlechter zu hören")
 
 

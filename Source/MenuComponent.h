@@ -86,59 +86,61 @@ public:
 
         btnSolo = std::make_unique<juce::TextButton>("btnSolo");
         addAndMakeVisible(btnSolo.get());
-
         btnSolo->setBounds(0, 0, 100, 30);
         btnSolo->setClickingTogglesState(true);
         btnSolo->setRadioGroupId(1);
-
         btnSolo->onClick = [this]()
             {
                 soloMenu->setVisible(true);
                 duoMenu->setVisible(false);
             };
         btnSolo->setToggleState(true, juce::dontSendNotification);
-        btnSolo->setColour(
-            juce::TextButton::buttonOnColourId,
-            juce::Colours::red);
+        btnSolo->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
 
 
         btnDuo = std::make_unique<juce::TextButton>("btnDuo");
         addAndMakeVisible(btnDuo.get());
-
         btnDuo->setBounds(100, 0, 100, 30);
         btnDuo->setClickingTogglesState(true);
         btnDuo->setRadioGroupId(1);
-
         btnDuo->onClick = [this]()
             {
                 soloMenu->setVisible(false);
                 duoMenu->setVisible(true);
             };
-        btnDuo->setColour(
-            juce::TextButton::buttonOnColourId,
-            juce::Colours::red);
+        btnDuo->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
 
         btnDeutsch = std::make_unique<juce::TextButton>("btnDeutsch");
         addAndMakeVisible(btnDeutsch.get());
+
         btnDeutsch->setButtonText("Deutsch");
         btnDeutsch->setBounds(300, 0, 100, 30);
-        btnDeutsch->onClick = [this]() { updateLocalisation(Sprache::DEUTSCH); };
+        btnDeutsch->setClickingTogglesState(true);
+        btnDeutsch->setRadioGroupId(2);
+
+        btnDeutsch->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
+
+        btnDeutsch->onClick = [this]() {updateLocalisation(Sprache::DEUTSCH);};
+        btnDeutsch->setToggleState(true, juce::dontSendNotification);
 
         btnEnglisch = std::make_unique<juce::TextButton>("btnEnglisch");
         addAndMakeVisible(btnEnglisch.get());
+
         btnEnglisch->setButtonText("Englisch");
         btnEnglisch->setBounds(400, 0, 100, 30);
-        btnEnglisch->onClick = [this]() { updateLocalisation(Sprache::ENGLISCH); };
+        btnEnglisch->setClickingTogglesState(true);
+        btnEnglisch->setRadioGroupId(2);
+
+        btnEnglisch->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
+
+        btnEnglisch->onClick = [this]() {updateLocalisation(Sprache::ENGLISCH);};
 
         btnTinnitus = std::make_unique<juce::TextButton>("btnTinnitus");
         addAndMakeVisible(btnTinnitus.get());
         btnTinnitus->setButtonText("Tinnitus");
         btnTinnitus->setBounds(0, 100, 100, 30);
         btnTinnitus->setClickingTogglesState(true);
-        btnTinnitus->onClick = [this]
-            {
-                btnTinnitus->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);
-            };
+        btnTinnitus->onClick = [this] {btnTinnitus->setColour(juce::TextButton::buttonOnColourId, juce::Colours::red);};
 
         Sprache aktuelleSprache = Sprache::DEUTSCH; // Globale Sprache
         const auto& texte = Localisation::get(aktuelleSprache);
