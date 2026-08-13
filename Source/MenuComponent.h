@@ -63,7 +63,7 @@ public:
     void updateLocalisation(Sprache s)
     {
         const auto &texte = Localisation::get(s);
-        btnA->setButtonText(texte.solo);
+        btnA->setButtonText(texte.duo);
     }
 
 private:
@@ -132,11 +132,9 @@ public:
         cbxSelect->setBounds(100, 100, 200, 30);
         cbxSelect->addItem(texte.schwerhoerigkeit_1, 1);
         cbxSelect->addItem(texte.schwerhoerigkeit_2, 2);
-        cbxSelect->setSelectedId (audioState.filterType.load() == 0 ? 1 : 2, juce::dontSendNotification);   // bullshit ternärer operator weil copilot...maybe fix
+        cbxSelect->setSelectedId(audioState.filterType.load() == 0 ? 1 : 2, juce::dontSendNotification); // bullshit ternärer operator...maybe fix
         cbxSelect->onChange = [this]()
-        {
-            audioState.filterType.store(cbxSelect->getSelectedId() == 1 ? 0 : 1);
-        };
+        { audioState.filterType.store(cbxSelect->getSelectedId() == 1 ? 0 : 1); };  // oder greif de scheise net un
 
         sldFx.reset(new juce::Slider("sldFx"));
         addAndMakeVisible(sldFx.get());
@@ -147,7 +145,7 @@ public:
         sldFx->setValue(audioState.cutoffHz.load());
         sldFx->setSkewFactorFromMidPoint(5000.0f); // zu niedriger skew -> fader ruckelt
         sldFx->onValueChange = [this]()
-        { audioState.cutoffHz.store(sldFx->getValue()); };  // wir bleibn bei cutoffHz...sonst muasi in localAudioCallback umbaun
+        { audioState.cutoffHz.store(sldFx->getValue()); }; // wir bleibn bei cutoffHz...suscht muasi in localAudioCallback umbaun
 
         lblFx.reset(new juce::Label("lblFx"));
         addAndMakeVisible(lblFx.get());

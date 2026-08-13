@@ -10,8 +10,7 @@ MainComponent::MainComponent()
 
     audioState.reset(new AudioState);
 
-    auto localUi = std::make_unique<UIComponent>(*audioState);
-    uiComp = std::move(localUi);
+    uiComp.reset(new UIComponent(*audioState));
     addAndMakeVisible(uiComp.get());
 
     // ensure UI has initial bounds immediately
