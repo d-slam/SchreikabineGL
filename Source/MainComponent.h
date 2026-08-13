@@ -36,7 +36,7 @@ private:
     juce::Synthesiser synth3; // contains sample 3 (bypassed by filter)
 
     // UI is delegated to UIComponent (defined in UIComponent.h)
-    std::unique_ptr<UIComponent> ui;
+    std::unique_ptr<UIComponent> uiComp;
 
     // audio-shared state (defined in AudioState.h)
     std::unique_ptr<AudioState> audioState;
@@ -56,7 +56,6 @@ private:
     int sampleNote2 = 61;
 
 
-    // UIComponent uiComponent;
 
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR (MainComponent)
