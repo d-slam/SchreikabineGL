@@ -64,5 +64,6 @@ private:
 
     std::unique_ptr<MenuComponent> menuComponent;
 
+public: // profesorium für access
     std::unique_ptr<SettingsComponent> settingsComponent;
 };
