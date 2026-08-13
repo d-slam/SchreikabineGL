@@ -117,6 +117,12 @@ public:
         btnEnglisch->onClick = [this]()
         { updateLocalisation(Sprache::ENGLISCH); };
 
+        btnTinnitus.reset(new juce::TextButton("btnTinnitus"));
+        addAndMakeVisible(btnTinnitus.get());
+        btnTinnitus->setButtonText("Tinnitus");
+        btnTinnitus->setBounds(0, 100, 100, 30);
+        btnTinnitus->onClick = [this]() {};
+
         // schreibe am ende strings
         updateLocalisation(Sprache::DEUTSCH);
     }
@@ -124,6 +130,7 @@ public:
     {
         btnSolo = nullptr;
         btnDuo = nullptr;
+        btnTinnitus = nullptr;
         btnDeutsch = nullptr;
         btnEnglisch = nullptr;
         soloMenu = nullptr;
@@ -152,6 +159,8 @@ public:
 private:
     std::unique_ptr<juce::TextButton> btnSolo;
     std::unique_ptr<juce::TextButton> btnDuo;
+
+    std::unique_ptr<juce::TextButton> btnTinnitus;
 
     std::unique_ptr<juce::TextButton> btnDeutsch;
     std::unique_ptr<juce::TextButton> btnEnglisch;
