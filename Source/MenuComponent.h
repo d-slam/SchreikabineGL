@@ -76,7 +76,7 @@ class MenuComponent : public juce::Component
 public:
     MenuComponent(AudioState& state) : audioState(state)
     {
-        soloMenu.reset(new SoloMenu); // menu
+        soloMenu = std::make_unique<SoloMenu>();
         addAndMakeVisible(soloMenu.get());
         duoMenu.reset(new DuoMenu);
         addAndMakeVisible(duoMenu.get());
@@ -86,23 +86,37 @@ public:
 
         btnSolo = std::make_unique<juce::TextButton>("btnSolo");
         addAndMakeVisible(btnSolo.get());
-        // btnSolo->setButtonText("solo");
+
         btnSolo->setBounds(0, 0, 100, 30);
+        btnSolo->setClickingTogglesState(true);
+        btnSolo->setRadioGroupId(1);
+
         btnSolo->onClick = [this]()
             {
                 soloMenu->setVisible(true);
                 duoMenu->setVisible(false);
             };
+        btnSolo->setToggleState(true, juce::dontSendNotification);
+        btnSolo->setColour(
+            juce::TextButton::buttonOnColourId,
+            juce::Colours::red);
+
 
         btnDuo = std::make_unique<juce::TextButton>("btnDuo");
         addAndMakeVisible(btnDuo.get());
-        // btnDuo->setButtonText("duo");
+
         btnDuo->setBounds(100, 0, 100, 30);
+        btnDuo->setClickingTogglesState(true);
+        btnDuo->setRadioGroupId(1);
+
         btnDuo->onClick = [this]()
             {
                 soloMenu->setVisible(false);
                 duoMenu->setVisible(true);
             };
+        btnDuo->setColour(
+            juce::TextButton::buttonOnColourId,
+            juce::Colours::red);
 
         btnDeutsch = std::make_unique<juce::TextButton>("btnDeutsch");
         addAndMakeVisible(btnDeutsch.get());
