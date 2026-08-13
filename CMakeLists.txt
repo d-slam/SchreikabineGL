@@ -23,6 +23,8 @@ target_sources(Schwerhoerigkeit
 target_link_libraries(Schwerhoerigkeit
     PRIVATE
         juce::juce_gui_extra
+        juce::juce_audio_utils
+        juce::juce_dsp
 )
 
 target_compile_definitions(Schwerhoerigkeit
