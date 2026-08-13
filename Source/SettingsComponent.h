@@ -39,33 +39,33 @@ public:
         fileLabel3->setText("No file", juce::dontSendNotification);
         fileLabel3->setColour(juce::Label::textColourId, juce::Colours::white);
 
-        loadButton1.reset(new juce::TextButton("Load Voice"));
+        loadButton1.reset(new juce::TextButton("Load..."));
         addAndMakeVisible(loadButton1.get());
 
-        loadButton2.reset(new juce::TextButton("Load Tinnitus"));
+        loadButton2.reset(new juce::TextButton("Load..."));
         addAndMakeVisible(loadButton2.get());
 
-        loadButton3.reset(new juce::TextButton("Load Bg"));
+        loadButton3.reset(new juce::TextButton("Load..."));
         addAndMakeVisible(loadButton3.get());
 
 
-        playButton1.reset(new juce::TextButton("Play"));
+        playButton1.reset(new juce::TextButton("Play Voice"));
         addAndMakeVisible(playButton1.get());
 
-        playButton2.reset(new juce::TextButton("Play"));
+        playButton2.reset(new juce::TextButton("Play Tinnitus"));
         addAndMakeVisible(playButton2.get());
 
-        playButton3.reset(new juce::TextButton("Play"));
+        playButton3.reset(new juce::TextButton("Play Voice"));
         addAndMakeVisible(playButton3.get());
 
 
-        playBothButton.reset(new juce::TextButton("playBoth"));
+        playBothButton.reset(new juce::TextButton("Play All"));
         addAndMakeVisible(playBothButton.get());
 
-        stopBothButton.reset(new juce::TextButton("stopBoth"));
+        stopBothButton.reset(new juce::TextButton("Stop All"));
         addAndMakeVisible(stopBothButton.get());
 
-        monitorButton.reset(new juce::TextButton("monitor"));
+        monitorButton.reset(new juce::TextButton("Monitor"));
         addAndMakeVisible(monitorButton.get());
 
     }
