@@ -10,7 +10,7 @@ public:
     {
         // setSize(getParentWidth(), getParentHeight());
 
-        const auto& texte = Localisation::get(Sprache::DEUTSCH);
+        // const auto& texte = Localisation::get(Sprache::DEUTSCH);
 
         maSlider.reset(new juce::Slider("maSlider"));
         addAndMakeVisible(maSlider.get());
@@ -20,7 +20,7 @@ public:
 
         maButton.reset(new juce::TextButton("maButton"));
         addAndMakeVisible(maButton.get());
-        maButton->setButtonText(texte.sprache);
+        maButton->setButtonText("maButton");
         maButton->setBounds(100, 0, 100, 30);
 
         maBox.reset(new juce::ComboBox("maBox"));

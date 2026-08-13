@@ -123,14 +123,26 @@ public:
         btnTinnitus->setBounds(0, 100, 100, 30);
         btnTinnitus->onClick = [this]() {};
 
+        Sprache aktuelleSprache = Sprache::DEUTSCH; // Globale Sprache
+        const auto &texte = Localisation::get(aktuelleSprache);
+
+        cbxSelect.reset(new juce::ComboBox("cbxSelect"));
+        addAndMakeVisible(cbxSelect.get());
+        cbxSelect->setBounds(100, 100, 200, 30);
+        cbxSelect->addItem(texte.schwerhoerigkeit_1, 1);
+        cbxSelect->addItem(texte.schwerhoerigkeit_2, 2);
+        cbxSelect->setSelectedItemIndex(1, false);
+
         // schreibe am ende strings
-        updateLocalisation(Sprache::DEUTSCH);
+
+        updateLocalisation(aktuelleSprache);
     }
     ~MenuComponent() override
     {
         btnSolo = nullptr;
         btnDuo = nullptr;
         btnTinnitus = nullptr;
+        cbxSelect = nullptr;
         btnDeutsch = nullptr;
         btnEnglisch = nullptr;
         soloMenu = nullptr;
@@ -154,6 +166,9 @@ public:
 
         btnSolo->setButtonText(texte.solo);
         btnDuo->setButtonText(texte.duo);
+
+        cbxSelect->changeItemText(1, texte.schwerhoerigkeit_1);
+        cbxSelect->changeItemText(2, texte.schwerhoerigkeit_2);
     }
 
 private:
@@ -161,6 +176,7 @@ private:
     std::unique_ptr<juce::TextButton> btnDuo;
 
     std::unique_ptr<juce::TextButton> btnTinnitus;
+    std::unique_ptr<juce::ComboBox> cbxSelect;
 
     std::unique_ptr<juce::TextButton> btnDeutsch;
     std::unique_ptr<juce::TextButton> btnEnglisch;

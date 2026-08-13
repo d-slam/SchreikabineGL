@@ -8,9 +8,12 @@ enum class Sprache
 };
 struct Strings
 {
-    juce::String sprache;
     juce::String solo;
     juce::String duo;
+    juce::String schwerhoerigkeit_1;
+    juce::String schwerhoerigkeit_2;
+
+
 };
 class Localisation
 {
@@ -18,16 +21,18 @@ public:
     static const Strings &get(Sprache sprache)
     {
         static const Strings deutsch{
-            "Deutsch",
             "Eine Person",
-            "Zwei Personen"
-
+            "Zwei Personen",
+            juce::String::fromUTF8("Altersschwerhörigkeit"),
+            juce::String::fromUTF8("Hochtonschwerhoerigkeit")
+            
         };
 
         static const Strings englisch{
-            "Englisch",
             "One Person",
-            "Two Persons"
+            "Two Persons",
+            "Age-related high-frequency hearing loss",
+            "Low-frequency hearing loss"
 
         };
 
