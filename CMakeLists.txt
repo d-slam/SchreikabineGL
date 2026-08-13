@@ -16,6 +16,7 @@ target_sources(Schwerhoerigkeit
         Source/MainComponent.cpp
         Source/UIComponent.h
         Source/MenuComponent.h
+        Source/Strings.h
 )
 
 target_link_libraries(Schwerhoerigkeit

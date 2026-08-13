@@ -1,7 +1,7 @@
 #pragma once
 #include <JuceHeader.h>
+#include "Strings.h"
 #include "MenuComponent.h"
-
 
 class UIComponent : public juce::Component
 {
@@ -9,6 +9,8 @@ public:
     UIComponent()
     {
         // setSize(getParentWidth(), getParentHeight());
+
+        const auto& texte = Localisation::get(Sprache::DEUTSCH);
 
         maSlider.reset(new juce::Slider("maSlider"));
         addAndMakeVisible(maSlider.get());
@@ -18,20 +20,12 @@ public:
 
         maButton.reset(new juce::TextButton("maButton"));
         addAndMakeVisible(maButton.get());
-        maButton->setButtonText("test text");
+        maButton->setButtonText(texte.sprache);
         maButton->setBounds(100, 0, 100, 30);
 
         maBox.reset(new juce::ComboBox("maBox"));
         addAndMakeVisible(maBox.get());
         maBox->setBounds(200, 0, 100, 30);
-
-        // menuComponent.setVisible(true);
-        // secondMenu.setVisible(false);
-        // settingsButton.onClick = [this]()
-        // {
-        //     mainPage.setVisible(false);
-        //     settingsPage.setVisible(true);
-        // };
 
         menuComponent.reset(new MenuComponent);
         addAndMakeVisible(menuComponent.get());
@@ -58,7 +52,6 @@ public:
     }
 
 private:
-
     std::unique_ptr<juce::Slider> maSlider;
 
     std::unique_ptr<juce::TextButton> maButton;
@@ -66,5 +59,4 @@ private:
     std::unique_ptr<juce::ComboBox> maBox;
 
     std::unique_ptr<MenuComponent> menuComponent;
-
 };
