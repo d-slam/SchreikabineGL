@@ -24,8 +24,8 @@ public:
             "Eine Person",
             "Zwei Personen",
             juce::String::fromUTF8("Altersschwerhörigkeit"),
-            juce::String::fromUTF8("Hochtonschwerhoerigkeit")
-            
+            juce::String::fromUTF8("Hochtonschwerhörigkeit")
+
         };
 
         static const Strings englisch{

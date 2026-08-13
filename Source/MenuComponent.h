@@ -131,7 +131,7 @@ public:
         cbxSelect->setBounds(100, 100, 200, 30);
         cbxSelect->addItem(texte.schwerhoerigkeit_1, 1);
         cbxSelect->addItem(texte.schwerhoerigkeit_2, 2);
-        cbxSelect->setSelectedItemIndex(1, false);
+        cbxSelect->setSelectedItemIndex(0, false);
 
         // schreibe am ende strings
 
@@ -169,6 +169,8 @@ public:
 
         cbxSelect->changeItemText(1, texte.schwerhoerigkeit_1);
         cbxSelect->changeItemText(2, texte.schwerhoerigkeit_2);
+        cbxSelect->setSelectedItemIndex(0, false);
+
     }
 
 private:
