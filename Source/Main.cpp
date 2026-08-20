@@ -10,11 +10,11 @@
 #include "MainComponent.h"
 
 //==============================================================================
-class SimpleGUIApplication  : public juce::JUCEApplication
+class SchreikabineApplication  : public juce::JUCEApplication
 {
 public:
     //==============================================================================
-    SimpleGUIApplication() {}
+    SchreikabineApplication() {}
 
     const juce::String getApplicationName() override       { return ProjectInfo::projectName; }
     const juce::String getApplicationVersion() override    { return ProjectInfo::versionString; }
@@ -75,6 +75,7 @@ public:
            #endif
 
             setVisible (true);
+			//setFullScreen(true);
         }
 
         void closeButtonPressed() override
@@ -102,4 +103,4 @@ private:
 
 //==============================================================================
 // This macro generates the main() routine that launches the app.
-START_JUCE_APPLICATION (SimpleGUIApplication)
+START_JUCE_APPLICATION (SchreikabineApplication)

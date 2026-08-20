@@ -1,17 +1,64 @@
+/*
+  ==============================================================================
+
+	AudioState.h
+	Created: 19 Jun 2026 10:21:45am
+	Author:  SchoeDam
+
+  ==============================================================================
+*/
+
 #pragma once
 
 #include <atomic>
 
 struct AudioState
 {
-    std::atomic<bool> monitorEnabled{false};
-    std::atomic<float> cutoffHz{5000.0f};
-    std::atomic<float> vol1{0.05f};
-    std::atomic<float> vol2{0.05f};
-    std::atomic<float> vol3{0.05f};
-    std::atomic<int> filterType{0}; // 0 = lowpass, 1 = highpass
+	
+	std::atomic<double> currentSampleRate{ 48000 };
 
-    /////////////////
 
-    // std::atomic<double> fx {20000};
+	// scope comp
+	std::atomic<float> fftSmooth{ 0.8f };
+
+	std::atomic<float> displaySmooth{ 0.15f };
+
+	std::atomic<float> dbMin{ -100 };		//sollte int sein...
+	std::atomic<float> scopeNormFactor{ 1.68f };
+	std::atomic<bool> scopeAutoNormalize{ true };
+	std::atomic<float> scopeRenderScale{ 1.0f };
+
+
+	// spec comp
+
+
+	std::atomic<int> spec_dBVisible{ -65 };
+	std::atomic<int> spec_dBFloor{ -80 };
+
+
+	//filter
+
+	// filter cutoff (high-pass)
+	std::atomic<double> hp_cutoff{ 60 };
+
+	// particle parameters for ScopeComponent (modifiable via UI)
+	std::atomic<float> particleGravity{ 716 };
+	std::atomic<float> particleInitVy{ 130.0f };
+	std::atomic<float> particleFadeRate{ 3.46f };
+	std::atomic<float> particleRadius{ 1.0f };
+	std::atomic<int> particleSpawnStep{ 10 };
+	std::atomic<int> particleMaxCount{ 50000 };
+
+	// global gain for display / processing (in dB)
+	std::atomic<float> gain_dB{ 60.0f };
+	// separate glow multiplier for spectrum rendering (0.0 .. 3.0)
+	std::atomic<float> glow{ 0.75f };
+	// scales how strongly signal magnitude affects glow (0..1)
+	std::atomic<float> glowAmount{ 0.91f };
+
+
+
+
+		
+
 };
