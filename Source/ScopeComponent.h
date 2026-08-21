@@ -36,15 +36,6 @@ public:
 
 
 
-		// initialize cached particle parameters from AudioState
-		particleGravityLocal = audioState.particleGravity.load();
-		particleInitVyLocal = audioState.particleInitVy.load();
-		particleFadeRateLocal = audioState.particleFadeRate.load();
-		particleRadiusLocal = audioState.particleRadius.load();
-		particleSpawnStepLocal = std::max(1, audioState.particleSpawnStep.load());
-		particleMaxCountLocal = std::max(1, audioState.particleMaxCount.load());
-
-
 	}
 
 	~ScopeComponent()
@@ -127,26 +118,9 @@ public:
 	juce::Image spectrumImage;
 	juce::Path spectrumPath;
 	std::function<void(const juce::Image&)> onRenderImageChanged;
-	std::function<void(const std::vector<float>&, const std::vector<juce::Point<float>>&, float, float, float)> onSpectrumDataChanged;
+	std::function<void(const std::vector<float>&)> onSpectrumDataChanged;
 	// protects concurrent access to spectrumImage
 	juce::CriticalSection spectrumImageLock;
-
-	// Particles for falling-path effect
-	struct Particle { float x; float y; float vy; float alpha; };
-	std::vector<Particle> particles;
-	juce::Random particleRandom;
-
-	// cached particle parameters (initialized once in ctor for small perf gain)
-	float particleGravityLocal = 0.0f;
-	float particleInitVyLocal = 0.0f;
-	float particleFadeRateLocal = 0.0f;
-	float particleRadiusLocal = 0.0f;
-	int particleSpawnStepLocal = 1;
-	int particleMaxCountLocal = 1000;
-
-	// live-sync control for particle params
-	int particleSyncCounter = 0;
-	int particleSyncInterval = 10; // frames (timer ticks) between syncs
 	float autoNormPeakSmoothed = 1.0f;
 
 
@@ -227,7 +201,7 @@ private:
 			scopeData[i] = scopeData[i] + audioState.displaySmooth.load() * (level - scopeData[i]);
 		}
 
-		// Rendering is handled by OpenGLScopeView; keep this component focused on analysis and simulation.
+		// Rendering is handled by OpenGLScopeView; keep this component focused on analysis.
 		return;
 
 		// Legacy offscreen renderer retained below for reference.
@@ -270,26 +244,6 @@ private:
 						y = (float)getHeight();
 					spectrumPath.lineTo(x, y);
 
-					// spawn a particle from the path every Nth point (read spawn rate/max from AudioState)
-					{
-						int spawnStep = audioState.particleSpawnStep.load();
-						if (spawnStep <= 0) spawnStep = 1;
-						size_t maxCount = static_cast<size_t>(audioState.particleMaxCount.load());
-
-						if ((i % particleSpawnStepLocal) == 0)
-						{
-							if (particles.size() < (size_t)particleMaxCountLocal)
-							{
-								float jitter = (particleRandom.nextFloat() - 0.5f) * 2.0f; // -1..1
-								Particle p;
-								p.x = x + jitter * 1.5f;
-								p.y = y;
-								p.vy = particleInitVyLocal * (0.8f + particleRandom.nextFloat() * 0.4f);
-								p.alpha = 1.0f;
-								particles.push_back(p);
-							}
-						}
-					}
 				}
 
 				gi.setColour(juce::Colours::lime.withAlpha(0.2f));
@@ -314,17 +268,6 @@ private:
 				gi.setColour(juce::Colours::lime.withAlpha(a2));
 				gi.strokePath(spectrumPath, juce::PathStrokeType(28.0f * glow, juce::PathStrokeType::curved, juce::PathStrokeType::rounded));
 
-				// draw particles behind the main stroke
-				// cache radius for render loop - glow does not affect particle size/alpha
-				float radiusLocal = audioState.particleRadius.load();
-				for (const auto& p : particles)
-				{
-					float a = juce::jlimit(0.0f, 1.0f, p.alpha);
-					gi.setColour(juce::Colours::lime.withAlpha(a));
-					float r = radiusLocal;
-					gi.fillEllipse(p.x - r, p.y - r, r * 2.0f, r * 2.0f);
-				}
-
 				// main stroke (stronger when gain is high)
 				float mainAlpha = juce::jmin(1.0f, 0.95f * glow);
 				gi.setColour(juce::Colours::lime.withAlpha(mainAlpha));
@@ -340,69 +283,18 @@ private:
 	{
 		if (nextFFTBlockReady)
 		{
-			// update particle physics (approx dt based on timer freq)
-			float dt = 1.0f / 120.0f; // timer runs at 120Hz
-			updateParticles(dt);
-			// periodic live-sync of particle parameters from AudioState
-			if (++particleSyncCounter >= particleSyncInterval)
-			{
-				particleSyncCounter = 0;
-				particleGravityLocal = audioState.particleGravity.load();
-				particleInitVyLocal = audioState.particleInitVy.load();
-				particleFadeRateLocal = audioState.particleFadeRate.load();
-				particleRadiusLocal = audioState.particleRadius.load();
-				particleSpawnStepLocal = std::max(1, audioState.particleSpawnStep.load());
-				particleMaxCountLocal = std::max(1, audioState.particleMaxCount.load());
-			}
-
 			drawNextFrameOfSpectrum();
 			nextFFTBlockReady = false;
 			if (onRenderImageChanged)
 				onRenderImageChanged(spectrumImage);
 			if (onSpectrumDataChanged)
-			{
-				std::vector<juce::Point<float>> particlePoints;
-				particlePoints.reserve(particles.size());
-				for (const auto& p : particles)
-					particlePoints.emplace_back(p.x, p.y);
-				onSpectrumDataChanged(scopeData, particlePoints, audioState.glow.load(), audioState.glowAmount.load(), particleRadiusLocal);
-			}
+				onSpectrumDataChanged(scopeData);
 			repaint();
 
 
 		}
 	}
 
-
-	void updateParticles(float dt)
-	{
-		if (particles.empty()) return;
-
-		// simple Euler integration + fade
-		// use cached local parameters where possible for performance
-		float gravity = particleGravityLocal;
-		float fadeRate = particleFadeRateLocal;
-		int maxCountLocal = particleMaxCountLocal;
-		for (size_t i = 0; i < particles.size(); )
-		{
-			auto& p = particles[i];
-			p.vy += gravity * dt;
-			p.y += p.vy * dt;
-			p.alpha -= fadeRate * dt;
-
-			// remove if invisible or out of bounds
-			if (p.alpha <= 0.0f || p.y > (float)getHeight() + 10.0f)
-			{
-				// swap-remove for efficiency
-				particles[i] = particles.back();
-				particles.pop_back();
-			}
-			else
-			{
-				++i;
-			}
-		}
-	}
 
 	void paint(juce::Graphics& g) override
 	{

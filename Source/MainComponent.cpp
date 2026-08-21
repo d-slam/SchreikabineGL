@@ -7,13 +7,13 @@ MainComponent::MainComponent()
 	setWantsKeyboardFocus(true);
 	setMouseClickGrabsKeyboardFocus(true);
 
-	openGLScopeView.reset(new OpenGLScopeView);
+	openGLScopeView.reset(new OpenGLScopeView(audioState));
 	addAndMakeVisible(openGLScopeView.get());
 
 	scopeComponent.reset(new ScopeComponent(audioState));
-	scopeComponent->onSpectrumDataChanged = [this](const std::vector<float>& data, const std::vector<juce::Point<float>>& particles, float glow, float glowAmount, float particleRadius)
+	scopeComponent->onSpectrumDataChanged = [this](const std::vector<float>& data)
 		{
-			openGLScopeView->setRenderData(data, particles, glow, glowAmount, particleRadius);
+			openGLScopeView->setRenderData(data);
 		};
 	addAndMakeVisible(scopeComponent.get());
 	scopeComponent->setVisible(false);
