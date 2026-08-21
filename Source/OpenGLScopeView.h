@@ -3,8 +3,7 @@
 #include <JuceHeader.h>
 #include "AudioState.h"
 
-class OpenGLScopeView final : public juce::Component,
-                              private juce::OpenGLRenderer
+class OpenGLScopeView final : public juce::Component, private juce::OpenGLRenderer
 {
 public:
     explicit OpenGLScopeView(AudioState& state) : audioState(state)
@@ -29,7 +28,10 @@ public:
         hasPendingData = true;
     }
 
-    void paint(juce::Graphics&) override {}
+    void paint(juce::Graphics&) override 
+    {
+        
+    }
     void resized() override {}
 
 private:
@@ -107,11 +109,11 @@ private:
     void renderOpenGL() override
     {
         const bool particleVisibilityTestMode = audioState.particleVisibilityTestMode.load();
-        const auto scale = (float) openGLContext.getRenderingScale();
-        const int width = juce::jmax(1, juce::roundToInt((float) getWidth() * scale));
-        const int height = juce::jmax(1, juce::roundToInt((float) getHeight() * scale));
+        const auto scale = (float)openGLContext.getRenderingScale();
+        const int width = juce::jmax(1, juce::roundToInt((float)getWidth() * scale));
+        const int height = juce::jmax(1, juce::roundToInt((float)getHeight() * scale));
         juce::gl::glViewport(0, 0, width, height);
-        juce::gl::glClearColor(0.018f, 0.030f, 0.045f, 1.0f);
+        juce::gl::glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         juce::gl::glClear(juce::gl::GL_COLOR_BUFFER_BIT);
 
         if (shader == nullptr || positionAttribute == nullptr)
@@ -133,8 +135,8 @@ private:
         shader->use();
 
         drawGlowPoints(scale);
-        drawLine(0.62f, 1.0f, 0.78f, 0.85f, 1.8f);
-        drawLine(0.92f, 1.0f, 0.96f, 1.0f, 1.1f);
+        drawLine(0.20f, 1.0f, 0.28f, 0.95f, 2.2f);
+        drawLine(0.88f, 1.0f, 0.90f, 1.0f, 1.4f);
 
         if (particleVisibilityTestMode)
             drawParticleDebugAnchors(scale);
@@ -144,11 +146,11 @@ private:
             shader->setUniform("pointMode", 1.0f);
             shader->setUniform("particleHardMode", particleVisibilityTestMode ? 1.0f : 0.0f);
             shader->setUniform("pointSize", juce::jmax(4.0f, particleRadius * 6.0f) * scale);
-            shader->setUniform("colour", 0.45f, 1.0f, 0.68f, 0.30f + alphaGlow * 0.30f);
-            drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int) particleVertices.size());
+            shader->setUniform("colour", 0.22f, 1.0f, 0.42f, 0.32f + alphaGlow * 0.30f);
+            drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int)particleVertices.size());
             shader->setUniform("pointSize", juce::jmax(2.0f, particleRadius * 2.8f) * scale);
-            shader->setUniform("colour", 0.88f, 1.0f, 0.93f, 0.92f);
-            drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int) particleVertices.size());
+            shader->setUniform("colour", 0.78f, 1.0f, 0.84f, 0.92f);
+            drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int)particleVertices.size());
         }
 
         juce::gl::glDisable(juce::gl::GL_BLEND);
@@ -196,7 +198,7 @@ private:
         {
             const float x = currentSpectrum.size() > 1 ? (float)i / (float)(currentSpectrum.size() - 1) : 0.0f;
             const float y = juce::jlimit(0.0f, 1.0f, currentSpectrum[i]);
-            spectrumVertices.push_back({ x * 2.0f - 1.0f, y * 2.0f - 1.0f });
+            spectrumVertices.push_back({x * 2.0f - 1.0f, y * 2.0f - 1.0f});
         }
 
         if (!spectrumDirty || width <= 0 || height <= 0)
@@ -271,25 +273,25 @@ private:
         particleVertices.clear();
         particleVertices.reserve(particles.size());
         for (const auto& p : particles)
-            particleVertices.push_back({ p.x, p.y, juce::jlimit(0.08f, 1.0f, p.alpha) });
+            particleVertices.push_back({p.x, p.y, juce::jlimit(0.08f, 1.0f, p.alpha)});
     }
 
     void uploadBuffer(GLuint buffer, const std::vector<LineVertex>& vertices)
     {
         juce::gl::glBindBuffer(juce::gl::GL_ARRAY_BUFFER, buffer);
         juce::gl::glBufferData(juce::gl::GL_ARRAY_BUFFER,
-                               (GLsizeiptr) (vertices.size() * sizeof(LineVertex)),
-                               vertices.data(),
-                               juce::gl::GL_DYNAMIC_DRAW);
+            (GLsizeiptr)(vertices.size() * sizeof(LineVertex)),
+            vertices.data(),
+            juce::gl::GL_DYNAMIC_DRAW);
     }
 
     void uploadBuffer(GLuint buffer, const std::vector<ParticleVertex>& vertices)
     {
         juce::gl::glBindBuffer(juce::gl::GL_ARRAY_BUFFER, buffer);
         juce::gl::glBufferData(juce::gl::GL_ARRAY_BUFFER,
-                               (GLsizeiptr) (vertices.size() * sizeof(ParticleVertex)),
-                               vertices.data(),
-                               juce::gl::GL_DYNAMIC_DRAW);
+            (GLsizeiptr)(vertices.size() * sizeof(ParticleVertex)),
+            vertices.data(),
+            juce::gl::GL_DYNAMIC_DRAW);
     }
 
     void drawLine(float red, float green, float blue, float alpha, float lineWidth)
@@ -299,7 +301,7 @@ private:
         shader->setUniform("pointSize", 1.0f);
         shader->setUniform("colour", red, green, blue, alpha * (0.2f + alphaGlow * 0.8f));
         juce::gl::glLineWidth(lineWidth);
-        drawLineBuffer(lineBuffer, juce::gl::GL_LINE_STRIP, (int) spectrumVertices.size());
+        drawLineBuffer(lineBuffer, juce::gl::GL_LINE_STRIP, (int)spectrumVertices.size());
     }
 
     void drawGlowPoints(float scale)
@@ -309,15 +311,15 @@ private:
         shader->setUniform("pointMode", 1.0f);
         shader->setUniform("particleHardMode", 0.0f);
         shader->setUniform("pointSize", juce::jmax(2.0f, 18.0f * scale));
-        shader->setUniform("colour", 0.06f, 0.22f, 0.18f, 0.09f * glowStrength);
+        shader->setUniform("colour", 0.00f, 0.48f, 0.08f, 0.14f * glowStrength);
         drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
 
         shader->setUniform("pointSize", juce::jmax(1.0f, 10.0f * scale));
-        shader->setUniform("colour", 0.18f, 0.55f, 0.42f, 0.15f * glowStrength);
+        shader->setUniform("colour", 0.10f, 0.90f, 0.18f, 0.24f * glowStrength);
         drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
 
         shader->setUniform("pointSize", juce::jmax(1.0f, 6.0f * scale));
-        shader->setUniform("colour", 0.58f, 1.0f, 0.80f, 0.20f * glowStrength);
+        shader->setUniform("colour", 0.45f, 1.0f, 0.56f, 0.30f * glowStrength);
         drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
     }
 
@@ -335,7 +337,7 @@ private:
         juce::gl::glBindBuffer(juce::gl::GL_ARRAY_BUFFER, buffer);
         juce::gl::glEnableVertexAttribArray(positionAttribute->attributeID);
         juce::gl::glVertexAttribPointer(positionAttribute->attributeID, 2, juce::gl::GL_FLOAT,
-                                        juce::gl::GL_FALSE, sizeof(LineVertex), nullptr);
+            juce::gl::GL_FALSE, sizeof(LineVertex), nullptr);
         if (alphaAttribute != nullptr && alphaAttribute->attributeID >= 0)
         {
             juce::gl::glDisableVertexAttribArray(alphaAttribute->attributeID);
@@ -351,13 +353,13 @@ private:
         juce::gl::glBindBuffer(juce::gl::GL_ARRAY_BUFFER, buffer);
         juce::gl::glEnableVertexAttribArray(positionAttribute->attributeID);
         juce::gl::glVertexAttribPointer(positionAttribute->attributeID, 2, juce::gl::GL_FLOAT,
-                                        juce::gl::GL_FALSE, sizeof(ParticleVertex), nullptr);
+            juce::gl::GL_FALSE, sizeof(ParticleVertex), nullptr);
         if (alphaAttribute != nullptr && alphaAttribute->attributeID >= 0)
         {
             juce::gl::glEnableVertexAttribArray(alphaAttribute->attributeID);
             juce::gl::glVertexAttribPointer(alphaAttribute->attributeID, 1, juce::gl::GL_FLOAT,
-                                            juce::gl::GL_FALSE, sizeof(ParticleVertex),
-                                            (const void*) offsetof(ParticleVertex, alpha));
+                juce::gl::GL_FALSE, sizeof(ParticleVertex),
+                (const void*)offsetof(ParticleVertex, alpha));
         }
         juce::gl::glDrawArrays(primitive, 0, count);
         if (alphaAttribute != nullptr && alphaAttribute->attributeID >= 0)
@@ -371,8 +373,8 @@ private:
     std::unique_ptr<juce::OpenGLShaderProgram> shader;
     std::unique_ptr<juce::OpenGLShaderProgram::Attribute> positionAttribute;
     std::unique_ptr<juce::OpenGLShaderProgram::Attribute> alphaAttribute;
-    GLuint lineBuffer { 0 };
-    GLuint particleBuffer { 0 };
+    GLuint lineBuffer{0};
+    GLuint particleBuffer{0};
     juce::CriticalSection dataLock;
     std::vector<float> pendingSpectrum;
     std::vector<float> currentSpectrum;
@@ -380,11 +382,11 @@ private:
     std::vector<ParticleVertex> particleVertices;
     std::vector<Particle> particles;
     juce::Random particleRandom;
-    bool spectrumDirty { false };
-    double lastFrameTimeMs { 0.0 };
-    float alphaGlow { 0.7f };
-    float particleRadius { 1.0f };
-    bool hasPendingData { false };
+    bool spectrumDirty{false};
+    double lastFrameTimeMs{0.0};
+    float alphaGlow{0.7f};
+    float particleRadius{1.0f};
+    bool hasPendingData{false};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLScopeView)
 };
