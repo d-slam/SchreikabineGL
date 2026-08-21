@@ -48,7 +48,7 @@ public:
             12000.0f, 13000.0f, 14000.0f, 16000.0f, 17000.0f, 18000.0f
         };
 
-        const float axisY = bounds.getBottom() - 34.0f;
+        const float axisY = bounds.getBottom() - axisOffsetPixels;
 
         g.setColour(juce::Colour::fromFloatRGBA(0.24f, 1.0f, 0.42f, 0.07f));
         for (float f : fineFreqs)
@@ -272,8 +272,8 @@ private:
 
         copyPendingData();
         syncVisualParams();
-        updateSpectrumVerticesAndSpawn(width, height);
-        updateParticles(width, height);
+        updateSpectrumVerticesAndSpawn(width, height, scale);
+        updateParticles(height, scale);
 
         if (spectrumVertices.empty())
             return;
@@ -335,7 +335,7 @@ private:
         return peak;
     }
 
-    void updateSpectrumVerticesAndSpawn(int width, int height)
+    void updateSpectrumVerticesAndSpawn(int width, int height, float scale)
     {
         if (currentSpectrum.empty())
         {
@@ -343,13 +343,19 @@ private:
             return;
         }
 
+        const float topPadPx = 8.0f * scale;
+        const float plotBottomPx = juce::jmax(topPadPx + 1.0f, (float)height - (axisOffsetPixels + axisPlotGapPixels) * scale);
+        spectrumTopNdc = 1.0f - 2.0f * (topPadPx / (float)height);
+        spectrumFloorNdc = 1.0f - 2.0f * (plotBottomPx / (float)height);
+
         spectrumVertices.clear();
         spectrumVertices.reserve(currentSpectrum.size());
         for (size_t i = 0; i < currentSpectrum.size(); ++i)
         {
             const float x = currentSpectrum.size() > 1 ? (float)i / (float)(currentSpectrum.size() - 1) : 0.0f;
-            const float y = juce::jlimit(0.0f, 1.0f, currentSpectrum[i]);
-            spectrumVertices.push_back({x * 2.0f - 1.0f, y * 2.0f - 1.0f});
+            const float level = juce::jlimit(0.0f, 1.0f, currentSpectrum[i]);
+            const float yNdc = spectrumFloorNdc + level * (spectrumTopNdc - spectrumFloorNdc);
+            spectrumVertices.push_back({x * 2.0f - 1.0f, yNdc});
         }
 
         if (!spectrumDirty || width <= 0 || height <= 0)
@@ -382,7 +388,7 @@ private:
         }
     }
 
-    void updateParticles(int width, int height)
+    void updateParticles(int height, float scale)
     {
         const double nowMs = juce::Time::getMillisecondCounterHiRes();
         if (lastFrameTimeMs <= 0.0)
@@ -399,6 +405,7 @@ private:
         const float pxToNdcY = 2.0f / (float)juce::jmax(1, height);
         const float gravity = -audioState.particleGravity.load() * pxToNdcY;
         const float fadeRate = juce::jmax(0.0f, audioState.particleFadeRate.load());
+        const float lowerClipNdc = spectrumFloorNdc - (2.0f * scale / (float)juce::jmax(1, height));
 
         for (size_t i = 0; i < particles.size();)
         {
@@ -407,7 +414,7 @@ private:
             p.y += p.vy * dt;
             p.alpha -= fadeRate * dt;
 
-            if (p.alpha <= 0.0f || p.y < -1.1f || p.y > 1.1f)
+            if (p.alpha <= 0.0f || p.y < lowerClipNdc || p.y > 1.1f)
             {
                 particles[i] = particles.back();
                 particles.pop_back();
@@ -424,7 +431,11 @@ private:
         particleVertices.clear();
         particleVertices.reserve(particles.size());
         for (const auto& p : particles)
+        {
+            if (p.y < spectrumFloorNdc)
+                continue;
             particleVertices.push_back({p.x, p.y, juce::jlimit(0.08f, 1.0f, p.alpha)});
+        }
     }
 
     static float frequencyToX(float freq, float width)
@@ -545,6 +556,10 @@ private:
     double lastFrameTimeMs{0.0};
     float alphaGlow{0.7f};
     float particleRadius{1.0f};
+    float spectrumFloorNdc{-0.85f};
+    float spectrumTopNdc{0.98f};
+    static constexpr float axisOffsetPixels = 34.0f;
+    static constexpr float axisPlotGapPixels = 6.0f;
     bool hasPendingData{false};
 
     JUCE_DECLARE_NON_COPYABLE_WITH_LEAK_DETECTOR(OpenGLScopeView)
