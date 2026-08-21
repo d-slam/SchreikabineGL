@@ -84,7 +84,7 @@ public:
 		sld_glow.reset(new juce::Slider("slider_glow"));
 		addAndMakeVisible(sld_glow.get());
 		sld_glow->setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-		sld_glow->setRange(0.0, 3.0, 0.01); // 0..3 multiplier
+		sld_glow->setRange(0.0, 3.0, 0.001); // 0..3 multiplier
 		sld_glow->setValue((double)audioState.glow.load());
 		sld_glow->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, elementWidth, labelHeight);
 		sld_glow->onValueChange = [this] { audioState.glow.store(static_cast<float>(sld_glow->getValue())); };
@@ -101,7 +101,7 @@ public:
 		sld_glowAmount.reset(new juce::Slider("slider_glowAmount"));
 		addAndMakeVisible(sld_glowAmount.get());
 		sld_glowAmount->setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-		sld_glowAmount->setRange(0.0, 1.0, 0.01);
+		sld_glowAmount->setRange(0.0, 1.0, 0.001);
 		sld_glowAmount->setValue((double)audioState.glowAmount.load());
 		sld_glowAmount->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, elementWidth, labelHeight);
 		sld_glowAmount->onValueChange = [this] { audioState.glowAmount.store(static_cast<float>(sld_glowAmount->getValue())); };
@@ -302,7 +302,7 @@ public:
 		sld_particleRadius.reset(new juce::Slider("slider_particleRadius"));
 		addAndMakeVisible(sld_particleRadius.get());
 		sld_particleRadius->setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-		sld_particleRadius->setRange(0.1, 8.0, 0.1);
+		sld_particleRadius->setRange(0.001, 8.0, 0.001);
 		sld_particleRadius->setValue((double)audioState.particleRadius.load());
 		sld_particleRadius->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, elementWidth, labelHeight);
 		sld_particleRadius->onValueChange = [this] { audioState.particleRadius.store(static_cast<float>(sld_particleRadius->getValue())); };
@@ -319,7 +319,7 @@ public:
 		sld_particleSpawnStep.reset(new juce::Slider("slider_particleSpawnStep"));
 		addAndMakeVisible(sld_particleSpawnStep.get());
 		sld_particleSpawnStep->setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-		sld_particleSpawnStep->setRange(1, 32, 1);
+		sld_particleSpawnStep->setRange(0.01, 64, 0.01);
 		sld_particleSpawnStep->setSkewFactorFromMidPoint(8);
 		sld_particleSpawnStep->setValue((int)audioState.particleSpawnStep.load());
 		sld_particleSpawnStep->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, elementWidth, labelHeight);
@@ -337,7 +337,7 @@ public:
 		sld_particleMaxCount.reset(new juce::Slider("slider_particleMaxCount"));
 		addAndMakeVisible(sld_particleMaxCount.get());
 		sld_particleMaxCount->setSliderStyle(juce::Slider::SliderStyle::RotaryVerticalDrag);
-		sld_particleMaxCount->setRange(1000, 100000, 100);
+		sld_particleMaxCount->setRange(1000, 500000, 100);
 		sld_particleMaxCount->setValue((int)audioState.particleMaxCount.load());
 		sld_particleMaxCount->setTextBoxStyle(juce::Slider::TextEntryBoxPosition::TextBoxBelow, false, elementWidth, labelHeight);
 		sld_particleMaxCount->onValueChange = [this] { audioState.particleMaxCount.store(static_cast<int>(sld_particleMaxCount->getValue())); };
