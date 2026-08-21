@@ -53,9 +53,14 @@ private:
     static constexpr const char* fragmentShader = R"glsl(
         uniform vec4 colour;
         uniform float pointMode;
+        uniform float particleHardMode;
         varying float vAlpha;
         void main() {
             if (pointMode > 0.5) {
+                if (particleHardMode > 0.5) {
+                    gl_FragColor = vec4(colour.rgb, colour.a * vAlpha);
+                    return;
+                }
                 vec2 p = gl_PointCoord - vec2(0.5);
                 float d = length(p) * 2.0;
                 float roundMask = clamp(1.0 - d * d, 0.0, 1.0);
@@ -101,6 +106,7 @@ private:
 
     void renderOpenGL() override
     {
+        const bool particleVisibilityTestMode = audioState.particleVisibilityTestMode.load();
         const auto scale = (float) openGLContext.getRenderingScale();
         const int width = juce::jmax(1, juce::roundToInt((float) getWidth() * scale));
         const int height = juce::jmax(1, juce::roundToInt((float) getHeight() * scale));
@@ -130,9 +136,13 @@ private:
         drawLine(0.62f, 1.0f, 0.78f, 0.85f, 1.8f);
         drawLine(0.92f, 1.0f, 0.96f, 1.0f, 1.1f);
 
+        if (particleVisibilityTestMode)
+            drawParticleDebugAnchors(scale);
+
         if (!particleVertices.empty())
         {
             shader->setUniform("pointMode", 1.0f);
+            shader->setUniform("particleHardMode", particleVisibilityTestMode ? 1.0f : 0.0f);
             shader->setUniform("pointSize", juce::jmax(4.0f, particleRadius * 6.0f) * scale);
             shader->setUniform("colour", 0.45f, 1.0f, 0.68f, 0.30f + alphaGlow * 0.30f);
             drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int) particleVertices.size());
@@ -285,6 +295,7 @@ private:
     void drawLine(float red, float green, float blue, float alpha, float lineWidth)
     {
         shader->setUniform("pointMode", 0.0f);
+        shader->setUniform("particleHardMode", 0.0f);
         shader->setUniform("pointSize", 1.0f);
         shader->setUniform("colour", red, green, blue, alpha * (0.2f + alphaGlow * 0.8f));
         juce::gl::glLineWidth(lineWidth);
@@ -296,6 +307,7 @@ private:
         const float glowStrength = 0.25f + alphaGlow * 0.75f;
 
         shader->setUniform("pointMode", 1.0f);
+        shader->setUniform("particleHardMode", 0.0f);
         shader->setUniform("pointSize", juce::jmax(2.0f, 18.0f * scale));
         shader->setUniform("colour", 0.06f, 0.22f, 0.18f, 0.09f * glowStrength);
         drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
@@ -306,6 +318,15 @@ private:
 
         shader->setUniform("pointSize", juce::jmax(1.0f, 6.0f * scale));
         shader->setUniform("colour", 0.58f, 1.0f, 0.80f, 0.20f * glowStrength);
+        drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
+    }
+
+    void drawParticleDebugAnchors(float scale)
+    {
+        shader->setUniform("pointMode", 1.0f);
+        shader->setUniform("particleHardMode", 1.0f);
+        shader->setUniform("pointSize", juce::jmax(3.0f, 5.0f * scale));
+        shader->setUniform("colour", 1.0f, 0.35f, 0.15f, 0.9f);
         drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
     }
 

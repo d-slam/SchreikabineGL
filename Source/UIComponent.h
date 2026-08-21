@@ -351,6 +351,24 @@ public:
 		lbl_particleMaxCount->setJustificationType(juce::Justification::centred);
 		lbl_particleMaxCount->attachToComponent(sld_particleMaxCount.get(), false);
 
+		cmb_particleRenderMode.reset(new juce::ComboBox("combo_particleRenderMode"));
+		addAndMakeVisible(cmb_particleRenderMode.get());
+		cmb_particleRenderMode->addItem("Normal", 1);
+		cmb_particleRenderMode->addItem("Test", 2);
+		cmb_particleRenderMode->setSelectedId(audioState.particleVisibilityTestMode.load() ? 2 : 1, juce::dontSendNotification);
+		cmb_particleRenderMode->onChange = [this]
+			{
+				audioState.particleVisibilityTestMode.store(cmb_particleRenderMode->getSelectedId() == 2);
+			};
+		cmb_particleRenderMode->setBounds(elementWidth * 6, (labelHeight * 4) + (elementHeight * 4) + 24, elementWidth * 2, 24);
+
+		lbl_particleRenderMode.reset(new juce::Label("label_particleRenderMode"));
+		addAndMakeVisible(lbl_particleRenderMode.get());
+		lbl_particleRenderMode->setText("particle mode", juce::NotificationType::dontSendNotification);
+		lbl_particleRenderMode->setColour(juce::Label::outlineColourId, juce::Colours::lime);
+		lbl_particleRenderMode->setJustificationType(juce::Justification::centredLeft);
+		lbl_particleRenderMode->setBounds(elementWidth * 6, (labelHeight * 4) + (elementHeight * 4), elementWidth * 2, 20);
+
 	}
 
 	~UIComponent()
@@ -368,6 +386,7 @@ public:
 		sld_particleRadius, lbl_particleRadius = nullptr;
 		sld_particleSpawnStep, lbl_particleSpawnStep = nullptr;
 		sld_particleMaxCount, lbl_particleMaxCount = nullptr;
+		cmb_particleRenderMode, lbl_particleRenderMode = nullptr;
 
 		sld_gain, lbl_gain = nullptr;
 		sld_glow, lbl_glow = nullptr;
@@ -417,6 +436,8 @@ public:
 
 	std::unique_ptr<juce::Slider> sld_particleMaxCount;
 	std::unique_ptr<juce::Label> lbl_particleMaxCount;
+	std::unique_ptr<juce::ComboBox> cmb_particleRenderMode;
+	std::unique_ptr<juce::Label> lbl_particleRenderMode;
 
 	// gain control
 	std::unique_ptr<juce::Slider> sld_gain;
