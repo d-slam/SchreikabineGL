@@ -57,9 +57,10 @@ private:
         void main() {
             if (pointMode > 0.5) {
                 vec2 p = gl_PointCoord - vec2(0.5);
-                float alpha = 1.0 - smoothstep(0.15, 1.0, length(p) * 2.0);
-                if (alpha <= 0.01) discard;
-                gl_FragColor = vec4(colour.rgb, colour.a * alpha * vAlpha);
+                float d = length(p) * 2.0;
+                float roundMask = clamp(1.0 - d * d, 0.0, 1.0);
+                float alpha = (0.18 + 0.82 * roundMask) * vAlpha;
+                gl_FragColor = vec4(colour.rgb, colour.a * alpha);
             } else {
                 gl_FragColor = vec4(colour.rgb, colour.a * vAlpha);
             }
@@ -132,11 +133,11 @@ private:
         if (!particleVertices.empty())
         {
             shader->setUniform("pointMode", 1.0f);
-            shader->setUniform("pointSize", juce::jmax(2.0f, particleRadius * 3.0f) * scale);
-            shader->setUniform("colour", 0.45f, 1.0f, 0.68f, 0.18f + alphaGlow * 0.22f);
+            shader->setUniform("pointSize", juce::jmax(4.0f, particleRadius * 6.0f) * scale);
+            shader->setUniform("colour", 0.45f, 1.0f, 0.68f, 0.30f + alphaGlow * 0.30f);
             drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int) particleVertices.size());
-            shader->setUniform("pointSize", juce::jmax(1.0f, particleRadius * 1.35f) * scale);
-            shader->setUniform("colour", 0.88f, 1.0f, 0.93f, 0.75f);
+            shader->setUniform("pointSize", juce::jmax(2.0f, particleRadius * 2.8f) * scale);
+            shader->setUniform("colour", 0.88f, 1.0f, 0.93f, 0.92f);
             drawBuffer(particleBuffer, juce::gl::GL_POINTS, (int) particleVertices.size());
         }
 
@@ -212,7 +213,7 @@ private:
             Particle p;
             p.x = spectrumVertices[i].x + jitter * (1.5f * pxToNdcX);
             p.y = spectrumVertices[i].y;
-            p.vy = -(initVyPx * (0.8f + particleRandom.nextFloat() * 0.4f)) * pxToNdcY;
+            p.vy = (initVyPx * (0.8f + particleRandom.nextFloat() * 0.4f)) * pxToNdcY;
             p.alpha = 1.0f;
             particles.push_back(p);
         }
@@ -243,7 +244,7 @@ private:
             p.y += p.vy * dt;
             p.alpha -= fadeRate * dt;
 
-            if (p.alpha <= 0.0f || p.y < -1.1f)
+            if (p.alpha <= 0.0f || p.y < -1.1f || p.y > 1.1f)
             {
                 particles[i] = particles.back();
                 particles.pop_back();
@@ -260,7 +261,7 @@ private:
         particleVertices.clear();
         particleVertices.reserve(particles.size());
         for (const auto& p : particles)
-            particleVertices.push_back({ p.x, p.y, juce::jlimit(0.0f, 1.0f, p.alpha) });
+            particleVertices.push_back({ p.x, p.y, juce::jlimit(0.08f, 1.0f, p.alpha) });
     }
 
     void uploadBuffer(GLuint buffer, const std::vector<LineVertex>& vertices)
@@ -314,7 +315,7 @@ private:
         juce::gl::glEnableVertexAttribArray(positionAttribute->attributeID);
         juce::gl::glVertexAttribPointer(positionAttribute->attributeID, 2, juce::gl::GL_FLOAT,
                                         juce::gl::GL_FALSE, sizeof(LineVertex), nullptr);
-        if (alphaAttribute != nullptr)
+        if (alphaAttribute != nullptr && alphaAttribute->attributeID >= 0)
         {
             juce::gl::glDisableVertexAttribArray(alphaAttribute->attributeID);
             juce::gl::glVertexAttrib1f(alphaAttribute->attributeID, 1.0f);
@@ -330,7 +331,7 @@ private:
         juce::gl::glEnableVertexAttribArray(positionAttribute->attributeID);
         juce::gl::glVertexAttribPointer(positionAttribute->attributeID, 2, juce::gl::GL_FLOAT,
                                         juce::gl::GL_FALSE, sizeof(ParticleVertex), nullptr);
-        if (alphaAttribute != nullptr)
+        if (alphaAttribute != nullptr && alphaAttribute->attributeID >= 0)
         {
             juce::gl::glEnableVertexAttribArray(alphaAttribute->attributeID);
             juce::gl::glVertexAttribPointer(alphaAttribute->attributeID, 1, juce::gl::GL_FLOAT,
@@ -338,7 +339,7 @@ private:
                                             (const void*) offsetof(ParticleVertex, alpha));
         }
         juce::gl::glDrawArrays(primitive, 0, count);
-        if (alphaAttribute != nullptr)
+        if (alphaAttribute != nullptr && alphaAttribute->attributeID >= 0)
             juce::gl::glDisableVertexAttribArray(alphaAttribute->attributeID);
         juce::gl::glDisableVertexAttribArray(positionAttribute->attributeID);
         juce::gl::glBindBuffer(juce::gl::GL_ARRAY_BUFFER, 0);

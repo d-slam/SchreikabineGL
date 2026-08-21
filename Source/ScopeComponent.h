@@ -204,7 +204,7 @@ private:
 		// Rendering is handled by OpenGLScopeView; keep this component focused on analysis.
 		return;
 
-		// Legacy offscreen renderer retained below for reference.
+		// Legacy offscreen renderer retained below for reference.		// check mol ob mor des no brauchn...
 		{
 			juce::ScopedLock lock(spectrumImageLock);
 			if (spectrumImage.isNull() || spectrumImage.getWidth() != getWidth() || spectrumImage.getHeight() != getHeight())
