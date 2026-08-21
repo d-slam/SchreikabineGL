@@ -10,7 +10,7 @@ public:
     {
         setOpaque(true);
         openGLContext.setRenderer(this);
-        openGLContext.setComponentPaintingEnabled(false);
+        openGLContext.setComponentPaintingEnabled(true);
         openGLContext.setContinuousRepainting(true);
         openGLContext.setOpenGLVersionRequired(juce::OpenGLContext::defaultGLVersion);
         openGLContext.attachTo(*this);
@@ -28,9 +28,56 @@ public:
         hasPendingData = true;
     }
 
-    void paint(juce::Graphics&) override 
+    void paint(juce::Graphics& g) override
     {
-        
+        const auto bounds = getLocalBounds().toFloat();
+        if (bounds.isEmpty())
+            return;
+
+        constexpr std::array<float, 10> freqs
+        {
+            20.0f, 50.0f, 100.0f, 200.0f, 500.0f,
+            1000.0f, 2000.0f, 5000.0f, 10000.0f, 20000.0f
+        };
+
+        const float axisY = bounds.getBottom() - 20.0f;
+
+        g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.44f, 0.78f));
+        g.drawHorizontalLine((int)axisY, bounds.getX(), bounds.getRight());
+
+        for (float f : freqs)
+        {
+            const float x = frequencyToX(f, bounds.getWidth()) + bounds.getX();
+            const bool strongLine = (f == 100.0f || f == 1000.0f || f == 10000.0f);
+
+            if (strongLine)
+            {
+                g.setColour(juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.52f, 0.44f));
+                g.drawLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), 1.8f);
+            }
+            else
+            {
+                g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.42f, 0.24f));
+                const float dashLengths[] = { 3.0f, 3.0f };
+                g.drawDashedLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), dashLengths, 2, 1.0f);
+            }
+
+            g.setColour(strongLine
+                ? juce::Colour::fromFloatRGBA(0.42f, 1.0f, 0.60f, 0.98f)
+                : juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.54f, 0.88f));
+            g.drawVerticalLine((int)x, axisY - 5.0f, axisY + 4.0f);
+
+            const juce::String label = f >= 1000.0f ? juce::String(f / 1000.0f, 0) + "k" : juce::String((int)f);
+            g.setColour(strongLine
+                ? juce::Colour::fromFloatRGBA(0.86f, 1.0f, 0.90f, 1.0f)
+                : juce::Colour::fromFloatRGBA(0.74f, 1.0f, 0.82f, 0.95f));
+            g.setFont(juce::Font(11.5f, juce::Font::plain));
+            g.drawText(label, (int)x - 18, (int)axisY + 6, 36, 14, juce::Justification::centred);
+        }
+
+        g.setColour(juce::Colour::fromFloatRGBA(0.52f, 1.0f, 0.66f, 0.95f));
+        g.setFont(juce::Font(12.0f, juce::Font::plain));
+        g.drawText("Hz", (int)bounds.getRight() - 24, (int)axisY + 5, 22, 14, juce::Justification::centred);
     }
     void resized() override {}
 
@@ -274,6 +321,14 @@ private:
         particleVertices.reserve(particles.size());
         for (const auto& p : particles)
             particleVertices.push_back({p.x, p.y, juce::jlimit(0.08f, 1.0f, p.alpha)});
+    }
+
+    static float frequencyToX(float freq, float width)
+    {
+        constexpr float minFreq = 20.0f;
+        constexpr float maxFreq = 20000.0f;
+        const float norm = (std::log10(freq) - std::log10(minFreq)) / (std::log10(maxFreq) - std::log10(minFreq));
+        return juce::jlimit(0.0f, width, norm * width);
     }
 
     void uploadBuffer(GLuint buffer, const std::vector<LineVertex>& vertices)

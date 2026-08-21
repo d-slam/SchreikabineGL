@@ -8,14 +8,15 @@ juce_add_gui_app(SchreikabineGL
     PRODUCT_NAME "SchreikabineGL"
 )
 
-juce_generate_juce_header(SchreikabineGL)
+juce_generate_juce_header(SchreikabineGL
+    Source/AxisOverlayComponent.h)
 
 target_sources(SchreikabineGL
     PRIVATE
         Source/Main.cpp
         Source/MainComponent.cpp
         Source/UIComponent.h
-	Source/OpenGLScopeView.h
+	    Source/OpenGLScopeView.h
 
 )
 
