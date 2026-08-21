@@ -48,9 +48,9 @@ public:
             12000.0f, 13000.0f, 14000.0f, 16000.0f, 17000.0f, 18000.0f
         };
 
-        const float axisY = bounds.getBottom() - 20.0f;
+        const float axisY = bounds.getBottom() - 34.0f;
 
-        g.setColour(juce::Colour::fromFloatRGBA(0.24f, 1.0f, 0.42f, 0.10f));
+        g.setColour(juce::Colour::fromFloatRGBA(0.24f, 1.0f, 0.42f, 0.07f));
         for (float f : fineFreqs)
         {
             const float x = frequencyToX(f, bounds.getWidth()) + bounds.getX();
@@ -58,8 +58,54 @@ public:
             g.drawDashedLine(juce::Line<float>(x, bounds.getY() + 10.0f, x, axisY - 2.0f), dashLengths, 2, 0.8f);
         }
 
-        g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.44f, 0.58f));
+        g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.44f, 0.48f));
         g.drawHorizontalLine((int)axisY, bounds.getX(), bounds.getRight());
+
+        struct LabelCandidate
+        {
+            float x = 0.0f;
+            juce::String text;
+            juce::Colour colour;
+            float width = 0.0f;
+            int priority = 0;
+        };
+
+        std::vector<LabelCandidate> candidates;
+        candidates.reserve(freqs.size() + fineFreqs.size());
+
+        const juce::Font labelFont(12.0f, juce::Font::plain);
+        auto toLabel = [](float f)
+        {
+            if (f < 1000.0f)
+                return juce::String((int)f);
+            if (std::fmod(f, 1000.0f) == 0.0f)
+                return juce::String((int)(f / 1000.0f)) + "k";
+            return juce::String(f / 1000.0f, 1) + "k";
+        };
+
+        auto addLabelCandidate = [&](float f, bool strongLine, int priority)
+        {
+            const float x = frequencyToX(f, bounds.getWidth()) + bounds.getX();
+            const juce::String text = toLabel(f);
+            float width = (float)(text.length() * 9 + 14);
+            if (width < 34.0f)
+                width = 34.0f;
+            candidates.push_back({
+                x,
+                text,
+                strongLine
+                    ? juce::Colour::fromFloatRGBA(0.84f, 1.0f, 0.88f, 0.88f)
+                    : juce::Colour::fromFloatRGBA(0.72f, 1.0f, 0.80f, 0.72f),
+                width,
+                priority
+            });
+        };
+
+        for (float f : fineFreqs)
+        {
+            if (f <= 5000.0f)
+                addLabelCandidate(f, false, 1);
+        }
 
         for (float f : freqs)
         {
@@ -73,7 +119,7 @@ public:
             }
             else
             {
-                g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.42f, 0.17f));
+                g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.42f, 0.13f));
                 const float dashLengths[] = { 3.0f, 4.0f };
                 g.drawDashedLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), dashLengths, 2, 0.9f);
             }
@@ -83,17 +129,59 @@ public:
                 : juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.54f, 0.72f));
             g.drawVerticalLine((int)x, axisY - 5.0f, axisY + 4.0f);
 
-            const juce::String label = f >= 1000.0f ? juce::String(f / 1000.0f, 0) + "k" : juce::String((int)f);
-            g.setColour(strongLine
-                ? juce::Colour::fromFloatRGBA(0.84f, 1.0f, 0.88f, 0.90f)
-                : juce::Colour::fromFloatRGBA(0.72f, 1.0f, 0.80f, 0.82f));
-            g.setFont(juce::Font(10.5f, juce::Font::plain));
-            g.drawText(label, (int)x - 18, (int)axisY + 6, 36, 14, juce::Justification::centred);
+            if (f <= 5000.0f || f == 10000.0f)
+                addLabelCandidate(f, strongLine, strongLine ? 3 : 2);
         }
 
-        g.setColour(juce::Colour::fromFloatRGBA(0.52f, 1.0f, 0.66f, 0.82f));
-        g.setFont(juce::Font(11.0f, juce::Font::plain));
-        g.drawText("Hz", (int)bounds.getRight() - 24, (int)axisY + 5, 22, 14, juce::Justification::centred);
+        std::sort(candidates.begin(), candidates.end(), [](const LabelCandidate& a, const LabelCandidate& b)
+            {
+                if (a.priority != b.priority)
+                    return a.priority > b.priority;
+                return a.x < b.x;
+            });
+
+        std::vector<LabelCandidate> accepted;
+        accepted.reserve(candidates.size());
+        const float minGap = 6.0f;
+
+        for (const auto& c : candidates)
+        {
+            const float left = c.x - c.width * 0.5f;
+            const float right = c.x + c.width * 0.5f;
+            bool overlaps = false;
+
+            for (const auto& a : accepted)
+            {
+                const float aLeft = a.x - a.width * 0.5f;
+                const float aRight = a.x + a.width * 0.5f;
+                if (!(right + minGap < aLeft || left > aRight + minGap))
+                {
+                    overlaps = true;
+                    break;
+                }
+            }
+
+            if (!overlaps)
+                accepted.push_back(c);
+        }
+
+        std::sort(accepted.begin(), accepted.end(), [](const LabelCandidate& a, const LabelCandidate& b)
+            {
+                return a.x < b.x;
+            });
+
+        g.setFont(labelFont);
+        for (const auto& c : accepted)
+        {
+            g.setColour(c.colour);
+            g.drawText(c.text, (int)std::round(c.x - c.width * 0.5f), (int)axisY + 7, (int)std::round(c.width), 16, juce::Justification::centred);
+        }
+
+        g.setColour(juce::Colour::fromFloatRGBA(0.0f, 0.0f, 0.0f, 0.45f));
+        g.fillRoundedRectangle(bounds.getRight() - 38.0f, axisY + 6.0f, 34.0f, 16.0f, 3.0f);
+        g.setColour(juce::Colour::fromFloatRGBA(0.72f, 1.0f, 0.80f, 0.98f));
+        g.setFont(juce::Font(12.5f, juce::Font::bold));
+        g.drawText("Hz", (int)bounds.getRight() - 35, (int)axisY + 7, 28, 14, juce::Justification::centred);
     }
     void resized() override {}
 
