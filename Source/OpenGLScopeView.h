@@ -40,9 +40,25 @@ public:
             1000.0f, 2000.0f, 5000.0f, 10000.0f, 20000.0f
         };
 
+        constexpr std::array<float, 24> fineFreqs
+        {
+            30.0f, 40.0f, 60.0f, 70.0f, 80.0f, 90.0f,
+            300.0f, 400.0f, 600.0f, 700.0f, 800.0f, 900.0f,
+            3000.0f, 4000.0f, 6000.0f, 7000.0f, 8000.0f, 9000.0f,
+            12000.0f, 13000.0f, 14000.0f, 16000.0f, 17000.0f, 18000.0f
+        };
+
         const float axisY = bounds.getBottom() - 20.0f;
 
-        g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.44f, 0.78f));
+        g.setColour(juce::Colour::fromFloatRGBA(0.24f, 1.0f, 0.42f, 0.10f));
+        for (float f : fineFreqs)
+        {
+            const float x = frequencyToX(f, bounds.getWidth()) + bounds.getX();
+            const float dashLengths[] = { 2.0f, 5.0f };
+            g.drawDashedLine(juce::Line<float>(x, bounds.getY() + 10.0f, x, axisY - 2.0f), dashLengths, 2, 0.8f);
+        }
+
+        g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.44f, 0.58f));
         g.drawHorizontalLine((int)axisY, bounds.getX(), bounds.getRight());
 
         for (float f : freqs)
@@ -52,31 +68,31 @@ public:
 
             if (strongLine)
             {
-                g.setColour(juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.52f, 0.44f));
-                g.drawLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), 1.8f);
+                g.setColour(juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.52f, 0.34f));
+                g.drawLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), 1.4f);
             }
             else
             {
-                g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.42f, 0.24f));
-                const float dashLengths[] = { 3.0f, 3.0f };
-                g.drawDashedLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), dashLengths, 2, 1.0f);
+                g.setColour(juce::Colour::fromFloatRGBA(0.26f, 1.0f, 0.42f, 0.17f));
+                const float dashLengths[] = { 3.0f, 4.0f };
+                g.drawDashedLine(juce::Line<float>(x, bounds.getY() + 8.0f, x, axisY - 2.0f), dashLengths, 2, 0.9f);
             }
 
             g.setColour(strongLine
-                ? juce::Colour::fromFloatRGBA(0.42f, 1.0f, 0.60f, 0.98f)
-                : juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.54f, 0.88f));
+                ? juce::Colour::fromFloatRGBA(0.42f, 1.0f, 0.60f, 0.90f)
+                : juce::Colour::fromFloatRGBA(0.34f, 1.0f, 0.54f, 0.72f));
             g.drawVerticalLine((int)x, axisY - 5.0f, axisY + 4.0f);
 
             const juce::String label = f >= 1000.0f ? juce::String(f / 1000.0f, 0) + "k" : juce::String((int)f);
             g.setColour(strongLine
-                ? juce::Colour::fromFloatRGBA(0.86f, 1.0f, 0.90f, 1.0f)
-                : juce::Colour::fromFloatRGBA(0.74f, 1.0f, 0.82f, 0.95f));
-            g.setFont(juce::Font(11.5f, juce::Font::plain));
+                ? juce::Colour::fromFloatRGBA(0.84f, 1.0f, 0.88f, 0.90f)
+                : juce::Colour::fromFloatRGBA(0.72f, 1.0f, 0.80f, 0.82f));
+            g.setFont(juce::Font(10.5f, juce::Font::plain));
             g.drawText(label, (int)x - 18, (int)axisY + 6, 36, 14, juce::Justification::centred);
         }
 
-        g.setColour(juce::Colour::fromFloatRGBA(0.52f, 1.0f, 0.66f, 0.95f));
-        g.setFont(juce::Font(12.0f, juce::Font::plain));
+        g.setColour(juce::Colour::fromFloatRGBA(0.52f, 1.0f, 0.66f, 0.82f));
+        g.setFont(juce::Font(11.0f, juce::Font::plain));
         g.drawText("Hz", (int)bounds.getRight() - 24, (int)axisY + 5, 22, 14, juce::Justification::centred);
     }
     void resized() override {}
