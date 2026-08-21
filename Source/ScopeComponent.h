@@ -21,8 +21,6 @@ public:
 	{
 		juce::zeromem(fifo, sizeof(fifo));
 		juce::zeromem(fftData, sizeof(fftData));
-		//juce::zeromem(scopeData, sizeof(scopeData));
-		//juce::zeromem(fftSmoothed, sizeof(fftSmoothed));
 
 		rebuildFFTLookup();
 
