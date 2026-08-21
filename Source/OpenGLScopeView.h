@@ -79,7 +79,8 @@ private:
         }
 
         positionAttribute = std::make_unique<juce::OpenGLShaderProgram::Attribute>(*shader, "position");
-    alphaAttribute = std::make_unique<juce::OpenGLShaderProgram::Attribute>(*shader, "alphaIn");
+        alphaAttribute = std::make_unique<juce::OpenGLShaderProgram::Attribute>(*shader, "alphaIn");
+        juce::gl::glEnable(juce::gl::GL_PROGRAM_POINT_SIZE);
         juce::gl::glGenBuffers(1, &lineBuffer);
         juce::gl::glGenBuffers(1, &particleBuffer);
     }
@@ -124,10 +125,9 @@ private:
         juce::gl::glBlendFunc(juce::gl::GL_SRC_ALPHA, juce::gl::GL_ONE);
         shader->use();
 
-        drawLine(0.028f, 0.045f, 0.060f, 0.95f, 16.0f);
-        drawLine(0.060f, 0.18f, 0.16f, 0.95f, 10.0f);
-        drawLine(0.105f, 0.30f, 0.24f, 0.95f, 6.0f);
-        drawLine(0.86f, 0.82f, 0.92f, 1.0f, 3.0f);
+        drawGlowPoints(scale);
+        drawLine(0.62f, 1.0f, 0.78f, 0.85f, 1.8f);
+        drawLine(0.92f, 1.0f, 0.96f, 1.0f, 1.1f);
 
         if (!particleVertices.empty())
         {
@@ -288,6 +288,24 @@ private:
         shader->setUniform("colour", red, green, blue, alpha * (0.2f + alphaGlow * 0.8f));
         juce::gl::glLineWidth(lineWidth);
         drawLineBuffer(lineBuffer, juce::gl::GL_LINE_STRIP, (int) spectrumVertices.size());
+    }
+
+    void drawGlowPoints(float scale)
+    {
+        const float glowStrength = 0.25f + alphaGlow * 0.75f;
+
+        shader->setUniform("pointMode", 1.0f);
+        shader->setUniform("pointSize", juce::jmax(2.0f, 18.0f * scale));
+        shader->setUniform("colour", 0.06f, 0.22f, 0.18f, 0.09f * glowStrength);
+        drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
+
+        shader->setUniform("pointSize", juce::jmax(1.0f, 10.0f * scale));
+        shader->setUniform("colour", 0.18f, 0.55f, 0.42f, 0.15f * glowStrength);
+        drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
+
+        shader->setUniform("pointSize", juce::jmax(1.0f, 6.0f * scale));
+        shader->setUniform("colour", 0.58f, 1.0f, 0.80f, 0.20f * glowStrength);
+        drawLineBuffer(lineBuffer, juce::gl::GL_POINTS, (int)spectrumVertices.size());
     }
 
     void drawLineBuffer(GLuint buffer, GLenum primitive, int count)
